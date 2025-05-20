@@ -5,8 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,19 +16,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nomo.R
+import com.example.nomo.network.ApiService.Friend
 import com.example.nomo.ui.common.CustomTextField
 import com.example.nomo.ui.theme.*
 import com.example.nomo.viewmodel.FriendViewModel
-import com.example.nomo.network.ApiService.Friend
 
 @Composable
 @Preview(showBackground = true)
 fun AddEntryScreenPreview() {
     NomoTheme {
         AddEntryScreen(
+            userId = 12312312, // TODO: Handle REAL userId
             onSaveRoom = { name, desc, users -> },
             onSaveEntry = { name, desc, debts -> }
         )
@@ -46,7 +45,7 @@ fun AddEntryScreen(
     var expandedRoom by remember { mutableStateOf(false) }
     var expandedEntry by remember { mutableStateOf(false) }
 
-    val friendViewModel: FriendViewModel = viewModel()
+    val friendViewModel: FriendViewModel = hiltViewModel()
     val friendState by friendViewModel.friendState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -77,7 +76,8 @@ fun AddEntryScreen(
                     expandedEntry = it
                     if (it) expandedRoom = false
                 },
-                onSave = onSaveEntry
+                onSave = onSaveEntry,
+                friendState = friendState
             )
         }
     }
@@ -92,9 +92,8 @@ private fun CreateRoomSection(
     var roomName by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var addUser by remember { mutableStateOf("") }
-    var selectedUsers by remember { mutableStateOf(emptyList<String>()) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var showInviteDialog by remember { mutableStateOf(false) }
+    var selectedUsers by remember { mutableStateOf(emptyList<Friend>()) }
+    val showFriendDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -155,12 +154,40 @@ private fun CreateRoomSection(
                 leadingIcon = R.drawable.ic_description
             )
             Spacer(Modifier.height(16.dp))
-            CustomTextField(
-                value = addUser,
-                onValueChange = { description = it },
-                placeholder = "Добавить пользователей",
-                leadingIcon = R.drawable.ic_plus
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
+                    .clickable { showFriendDialog.value = true }
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = "Add Users",
+                    tint = SecondaryTextOnBackground
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Добавить пользователей",
+                    fontSize = 16.sp,
+                    fontFamily = SFProText,
+                    fontWeight = FontWeight.Medium,
+                    color = SecondaryTextOnBackground,
+                )
+            }
+
+            if (selectedUsers.isNotEmpty()) {
+                LazyColumn {
+                    items(selectedUsers.size) { index ->
+                        Text(
+                            text = selectedUsers[index].username,
+                            fontSize = 14.sp,
+                            fontFamily = SFProText
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -169,11 +196,13 @@ private fun CreateRoomSection(
 private fun AddEntrySection(
     expanded: Boolean,
     onExpandChange: (Boolean) -> Unit,
-    onSave: (String, String, Map<String, Double>) -> Unit
+    onSave: (String, String, Map<String, Double>) -> Unit,
+    friendState: FriendViewModel.FriendState
 ) {
     var entryName by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var selectedFriends by remember { mutableStateOf(emptyList<Friend>()) }
+
+    var selectedFriends = remember { mutableStateListOf<FriendWithDebt>() }
 
     val showFriendDialog = remember { mutableStateOf(false) }
 
@@ -236,12 +265,71 @@ private fun AddEntrySection(
                 leadingIcon = R.drawable.ic_description
             )
             Spacer(Modifier.height(16.dp))
-            CustomTextField(
-                value = addUser,
-                onValueChange = { description = it },
-                placeholder = "Добавить пользователей",
-                leadingIcon = R.drawable.ic_plus
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
+                    .clickable { showFriendDialog.value = true }
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = "Add Users",
+                    tint = SecondaryTextOnBackground
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Добавить пользователя",
+                    fontSize = 16.sp,
+                    fontFamily = SFProText,
+                    fontWeight = FontWeight.Medium,
+                    color = SecondaryTextOnBackground,
+                )
+            }
+
+            if (selectedFriends.isNotEmpty()) {
+                LazyColumn {
+                    items(selectedFriends.size) { index ->
+                        val item = selectedFriends[index]
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = item.friend.username,
+                                fontSize = 14.sp,
+                                fontFamily = SFProText
+                            )
+                            Text(
+                                text = item.amount,
+                                fontSize = 14.sp,
+                                fontFamily = SFProText
+                            )
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    if (showFriendDialog.value) {
+        FriendSelectionDialog(
+            friends = when (friendState) {
+                is FriendViewModel.FriendState.Success -> (friendState as FriendViewModel.FriendState.Success).friends
+                else -> emptyList()
+            },
+            selectionMode = FriendSelectionMode.SINGLE,
+            onFriendSelected = {
+                if (it.isNotEmpty()) {
+                    // TODO: Update state (API)
+                }
+            },
+            onDismiss = {
+                showFriendDialog.value = false
+            }
+        )
     }
 }

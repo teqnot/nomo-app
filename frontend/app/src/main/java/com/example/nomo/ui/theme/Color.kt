@@ -27,6 +27,5 @@ val SecondaryTextOnPrimary = Color(0xFF655F5F) // Вспомогательный
 val SecondaryTextOnBackground = Color(0xB3A9AAAC) // Вспомогательный текст (На белом)
 val SecondaryTextOnHover = Color(0xFF55387F) // Вспомогательный цвет при наведении (темно-фиолетовый)
 
-
 val White = Color(0xFFFFFFFF) // Белый
 val Black = Color(0xFF000000) // Черный

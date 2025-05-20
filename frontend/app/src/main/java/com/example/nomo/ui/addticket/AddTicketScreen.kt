@@ -14,6 +14,7 @@ fun AddTicketScreen() {
         TopBar()
         TextAddTicket()
         AddEntryScreen(
+            userId = 12312, // TODO: Handle REAL userId
             onSaveRoom = { name, desc, users -> },
             onSaveEntry = { name, desc, debts -> }
         )
