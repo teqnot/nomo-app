@@ -42,15 +42,32 @@ fun AddEntryScreen(
     onSaveRoom: (String, String, List<String>) -> Unit,
     onSaveEntry: (String, String, Map<String, Double>) -> Unit
 ) {
+    // TEST VALUES ONLY; DELETE ON PROD (!!)
+    val testFriends = listOf(
+        Friend(id = 22, username = "testingNewFunctions"),
+        Friend(id = 23, username = "testingNewFunctions2"),
+        Friend(id = 24, username = "Alex"),
+        Friend(id = 25, username = "Max")
+    )
+
     var expandedRoom by remember { mutableStateOf(false) }
     var expandedEntry by remember { mutableStateOf(false) }
 
-    val friendViewModel: FriendViewModel = hiltViewModel()
-    val friendState by friendViewModel.friendState.collectAsState()
+    // COMMENTED OUT FOR TEST PURPOSES ONLY; REVERT ON PROD (!!)
+//    val friendViewModel: FriendViewModel = hiltViewModel()
+//    val friendState by friendViewModel.friendState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        friendViewModel.loadFriends(userId)
+    // TEST VALUE ONLY; DELETE ON PROD (!!)
+    val friendState = remember {
+        mutableStateOf<FriendViewModel.FriendState>(
+            FriendViewModel.FriendState.Success(testFriends)
+        )
     }
+
+    // COMMENTED OUT FOR TEST PURPOSES ONLY; REVERT ON PROD (!!)
+//    LaunchedEffect(Unit) {
+//        friendViewModel.loadFriends(userId)
+//    }
 
     LazyColumn(
         modifier = Modifier
@@ -65,7 +82,8 @@ fun AddEntryScreen(
                     expandedRoom = it
                     if (it) expandedEntry = false
                 },
-                onSave = onSaveRoom
+                onSave = onSaveRoom,
+                friendState = friendState.value
             )
         }
 
@@ -77,7 +95,9 @@ fun AddEntryScreen(
                     if (it) expandedRoom = false
                 },
                 onSave = onSaveEntry,
-                friendState = friendState
+                // .value IS FOR TEST PURPOSES ONLY;
+                // REVERT TO JUST friendState ON PROD (!!)
+                friendState = friendState.value
             )
         }
     }
@@ -87,7 +107,8 @@ fun AddEntryScreen(
 private fun CreateRoomSection(
     expanded: Boolean,
     onExpandChange: (Boolean) -> Unit,
-    onSave: (String, String, List<String>) -> Unit
+    onSave: (String, String, List<String>) -> Unit,
+    friendState: FriendViewModel.FriendState
 ) {
     var roomName by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -188,6 +209,25 @@ private fun CreateRoomSection(
                     }
                 }
             }
+        }
+
+        if (showFriendDialog.value) {
+            val friendsList = when (friendState) {
+                is FriendViewModel.FriendState.Success -> (friendState as FriendViewModel.FriendState.Success).friends
+                else -> emptyList()
+            }
+
+            FriendSelectionDialog(
+                friends = friendsList,
+                selectionMode = FriendSelectionMode.MULTIPLE,
+                onSingleFriendSelected = { /* Is NOT used in this mode  */ },
+                onMultipleFriendsSelected = { list ->
+                    selectedUsers = list
+                },
+                onDismiss = {
+                    showFriendDialog.value = false
+                }
+            )
         }
     }
 }
@@ -316,17 +356,19 @@ private fun AddEntrySection(
     }
 
     if (showFriendDialog.value) {
+        val friendsList = when (friendState) {
+            is FriendViewModel.FriendState.Success -> (friendState as FriendViewModel.FriendState.Success).friends
+            else -> emptyList()
+        }
+
         FriendSelectionDialog(
-            friends = when (friendState) {
-                is FriendViewModel.FriendState.Success -> (friendState as FriendViewModel.FriendState.Success).friends
-                else -> emptyList()
-            },
+            friends = friendsList,
             selectionMode = FriendSelectionMode.SINGLE,
-            onFriendSelected = {
-                if (it.isNotEmpty()) {
-                    // TODO: Update state (API)
-                }
+            onSingleFriendSelected = { friendWithDebt ->
+                selectedFriends.clear()
+                selectedFriends.add(friendWithDebt)
             },
+            onMultipleFriendsSelected = { /* Is NOT used in this mode */ },
             onDismiss = {
                 showFriendDialog.value = false
             }
