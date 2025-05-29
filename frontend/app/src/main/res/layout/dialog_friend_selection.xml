@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/dropdown_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_person"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Выберите пользователя"
+            android:textSize="16sp"
+            android:fontFamily="@font/sf_pro_display_bold"
+            android:textColor="@color/black"
+            android:layout_marginLeft="8dp"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/secondary_text_on_hover"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Dropdown Input for Debt Amount -->
+    <ListView
+        android:id="@+id/listFriends"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/divider_balances"
+        android:dividerHeight="2dp" />
+
+    <LinearLayout
+        android:id="@+id/dropdownInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@drawable/bg_dropdown"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/editTextDebtAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Сумма"
+            android:drawableStart="@drawable/ic_dollar"
+            android:textSize="16sp"/>
+
+        <Button
+            android:id="@+id/buttonSaveDebt"
+            android:text="Сохранить"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/buttonDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Готово"
+        android:textSize="16sp"
+        android:fontFamily="@font/sf_pro_display_semibold"
+        android:textColor="@color/secondary_text_on_hover"
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="4dp"/>
+</LinearLayout>

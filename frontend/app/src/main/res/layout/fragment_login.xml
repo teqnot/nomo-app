@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 1. ФОН -->
+    <LinearLayout
+        android:id="@+id/backgroundContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="48dp"
+        android:background="@drawable/ic_background_login"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="80dp">
+
+        <!-- Приветствие поверх фона -->
+        <TextView
+            android:id="@+id/textWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="C возвращением!"
+            android:textSize="24sp"
+            android:fontFamily="@font/sf_pro_display_bold"
+            android:textColor="@color/black"
+            android:layout_gravity="start"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"/>
+
+        <TextView
+            android:id="@+id/textSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Пожалуйста войдите, чтобы продолжить"
+            android:textSize="16sp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:textColor="@color/secondary_text_on_primary"
+            android:layout_gravity="start"
+            android:paddingStart="16dp"/>
+    </LinearLayout>
+
+    <!-- 2. Кнопка Назад -->
+    <ImageView
+        android:id="@+id/buttonBack"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_nav_back"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- 3. Граница под фоном -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBelowBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="340dp"/> <!-- Высота = высота backgroundContainer + marginTop -->
+
+    <!-- 4. Основной контент ПОСЛЕ фона -->
+    <LinearLayout
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_default="spread">
+
+        <!-- Поле ввода никнейма -->
+        <com.example.nomo.ui.common.CustomEditText
+            android:id="@+id/editTextNickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Никнейм"
+            android:drawableLeft="@drawable/ic_register_person"
+            android:drawablePadding="8dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"/>
+
+        <!-- Поле ввода пароля -->
+        <com.example.nomo.ui.common.CustomEditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Пароль"
+            android:inputType="textPassword"
+            android:drawableLeft="@drawable/ic_register_lock"
+            android:drawablePadding="8dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"/>
+
+
+        <!-- Кнопка Войти -->
+        <Button
+            android:id="@+id/buttonLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Войти"
+            android:textSize="24sp"
+            android:fontFamily="@font/sf_pro_display_bold"
+            android:textColor="@color/white"
+            android:background="@drawable/filled_button"
+            android:textAllCaps="false"
+            android:padding="8dp"
+            android:layout_marginTop="20dp"/>
+
+        <!-- Разделитель "или" -->
+        <include
+            layout="@layout/divider_with_text"
+            android:id="@+id/dividerWithText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Кнопка Зарегистрироваться -->
+        <Button
+            android:id="@+id/buttonRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Зарегестрироваться"
+            android:textSize="24sp"
+            android:fontFamily="@font/sf_pro_display_bold"
+            android:textColor="@color/primary_color"
+            android:background="@drawable/outlined_button"
+            android:textAllCaps="false"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,151 @@
+package com.example.nomo.ui.mainpage;
+
+import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.nomo.R;
+import com.example.nomo.adapter.DebtListAdapter;
+import com.example.nomo.model.Debt;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainFragment extends Fragment {
+
+    private RecyclerView recyclerView;
+    private DebtListAdapter adapter;
+    private List<Debt> allDebts = new ArrayList<>();
+    private List<Debt> filteredDebts = new ArrayList<>();
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_main, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Инициализация тестовых данных
+        initTestDebts();
+
+        // Настройка RecyclerView
+        recyclerView = view.findViewById(R.id.recyclerViewDebts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new DebtListAdapter(filteredDebts);
+        recyclerView.setAdapter(adapter);
+
+        setupBalanceCards(view);
+    }
+
+    private void initTestDebts() {
+        allDebts.clear();
+        allDebts.add(new Debt("Иван Борисов", "331₽", false));
+        allDebts.add(new Debt("Илья Макаров", "8912₽", true));
+        allDebts.add(new Debt("Артем Рожков", "87 091₽", true));
+        filteredDebts.addAll(allDebts);
+    }
+
+    private void setupBalanceCards(View view) {
+        String[] amounts = updateBalance();
+        View cardYouOwe = view.findViewById(R.id.balanceYouOweCard);
+        updateBalanceCard(
+                cardYouOwe,
+                "Вы должны:",
+                amounts[0],
+                ContextCompat.getColor(requireContext(), R.color.you_owe),
+                ContextCompat.getColor(requireContext(), R.color.accent_you_owe)
+        );
+        View cardYouAreOwed = view.findViewById(R.id.balanceYouAreOwedCard);
+        updateBalanceCard(
+                cardYouAreOwed,
+                "Вам должны:",
+                amounts[1],
+                ContextCompat.getColor(requireContext(), R.color.you_are_owed),
+                ContextCompat.getColor(requireContext(), R.color.accent_you_are_owed)
+        );
+
+        // Клик по карточке "Вы должны"
+        cardYouOwe.setOnClickListener(v -> {
+            List<Debt> filteredList = new ArrayList<>();
+            for (Debt debt : allDebts) {
+                if (!debt.isOwedToMe()) {
+                    filteredList.add(debt);
+                }
+            }
+            adapter.updateDebts(filteredList);
+        });
+
+        // Клик по карточке "Вам должны"
+        cardYouAreOwed.setOnClickListener(v -> {
+            List<Debt> filteredList = new ArrayList<>();
+            for (Debt debt : allDebts) {
+                if (debt.isOwedToMe()) {
+                    filteredList.add(debt);
+                }
+            }
+            adapter.updateDebts(filteredList);
+        });
+    }
+
+    private String[] updateBalance() {
+        double totalYouOwe = 0;
+        double totalYouAreOwed = 0;
+
+        for (Debt debt : allDebts) {
+            try {
+                String amountClean = debt.getAmount().replace("₽", "").replace(",", ".").replaceAll("\\s+", "");
+                double amount = Double.parseDouble(amountClean);
+                if (debt.isOwedToMe()) {
+                    totalYouAreOwed += amount;
+                } else {
+                    totalYouOwe += amount;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        return new String[] {Double.toString(totalYouOwe), Double.toString(totalYouAreOwed)};
+    }
+
+    private void updateBalanceCard(View cardView, String title, String amount, int bgColor, int lineColor) {
+        TextView cardTitle = cardView.findViewById(R.id.cardTitle);
+        TextView cardAmount = cardView.findViewById(R.id.cardAmount);
+        View cardLine = cardView.findViewById(R.id.cardLine);
+
+        // Обновляем заголовок
+        cardTitle.setText(title);
+
+        // Обновляем сумму
+        cardAmount.setText(amount);
+
+        // Обновляем фон
+        GradientDrawable newBackground = new GradientDrawable();
+        newBackground.setCornerRadius(10);
+        newBackground.setColor(bgColor);
+        cardView.setBackground(newBackground);
+
+        // Обновляем цвет линии
+        cardLine.setBackgroundColor(lineColor);
+
+        // Текст подсветка
+        cardTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+        cardAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+    }
+}

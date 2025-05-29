@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Create Room Section -->
+    <LinearLayout
+        android:id="@+id/sectionCreateRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF6F0FF"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_group"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:text="Создать комнату"
+                android:textSize="16sp"
+                android:fontFamily="@font/sf_pro_display_bold"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/secondary_text_on_hover"
+            android:layout_marginTop="2dp"/>
+
+        <TextView
+            android:text="Создайте комнату, чтобы удобно учитывать расходы между целой группой друзей!"
+            android:textSize="14sp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondary_text_on_primary"/>
+
+        <!-- Expandable Fields -->
+        <LinearLayout
+            android:id="@+id/expandedFieldsRoom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
+
+            <EditText
+                android:id="@+id/editTextRoomName"
+                android:hint="Название"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_tag"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/editTextRoomDescription"
+                android:hint="Описание"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_description"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <LinearLayout
+                android:id="@+id/buttonSelectFriendsRoom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_plus"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/textAddUserRoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Добавить пользователей"
+                    android:textSize="16sp"
+                    android:textColor="#666"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/selectedUsersContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Add Entry Section -->
+    <LinearLayout
+        android:id="@+id/sectionAddEntry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF6F0FF"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_person"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:text="Добавить запись"
+                android:textSize="16sp"
+                android:fontFamily="@font/sf_pro_display_bold"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/secondary_text_on_hover"
+            android:layout_marginTop="2dp"/>
+
+
+        <TextView
+            android:text="Добавьте индивидуальную запись и начните уже сейчас следить за своими расходами!"
+            android:textSize="14sp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondary_text_on_primary"/>
+
+        <LinearLayout
+            android:id="@+id/expandedFieldsEntry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
+
+            <EditText
+                android:id="@+id/editTextEntryName"
+                android:hint="Название"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_tag"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/editTextEntryDescription"
+                android:hint="Описание"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_description"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <LinearLayout
+                android:id="@+id/buttonSelectFriendEntry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_plus"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/textAddUserEntry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Добавить пользователя"
+                    android:textSize="16sp"
+                    android:textColor="#666"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/selectedFriendContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

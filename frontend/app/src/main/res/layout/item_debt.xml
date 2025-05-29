@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/debtRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Основная строка долга -->
+    <LinearLayout
+        android:id="@+id/debtRowInner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/textFriendName"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Имя пользователя"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/amountContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:background="@drawable/balance_amount_tag"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textDebtAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="331₽"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iconArrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_nav_forward"
+            android:layout_marginStart="8dp"
+            app:tint="@color/secondary_text_on_hover" />
+    </LinearLayout>
+
+    <!-- Dropdown Input -->
+    <LinearLayout
+        android:id="@+id/dropdownInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@drawable/bg_dropdown"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/editTextDebtAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Сумма"
+            android:drawableStart="@drawable/ic_dollar"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/buttonEnterFullAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ввести всю сумму"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text_on_hover"
+                android:backgroundTint="@android:color/transparent"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/buttonSaveDebt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сохранить"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text_on_hover"
+                android:backgroundTint="@android:color/transparent"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
