@@ -1,26 +1,36 @@
 package com.example.nomo;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import android.widget.Toast;
 
-import com.example.nomo.ui.mainpage.MainFragment;
-import com.example.nomo.R;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_main);
+        setContentView(R.layout.activity_main);
 
-        // Загрузите MainFragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new MainFragment())
-                    .commit();
+        // Получаем NavHostFragment
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
+        }
+    }
+
+    // Метод для перехода на AddEntryFragment
+    public void navigateToAddEntry() {
+        if (navController != null && navController.getCurrentDestination() != null) {
+            navController.navigate(R.id.addEntryFragment);
+        } else {
+            Toast.makeText(this, "NavController не готов", Toast.LENGTH_SHORT).show();
         }
     }
 }

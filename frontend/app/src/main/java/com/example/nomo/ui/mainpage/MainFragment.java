@@ -1,14 +1,16 @@
 package com.example.nomo.ui.mainpage;
 
+import static android.text.TextUtils.replace;
+
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.view.ViewStub;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,9 +19,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.nomo.MainActivity;
 import com.example.nomo.R;
 import com.example.nomo.adapter.DebtListAdapter;
 import com.example.nomo.model.Debt;
+import com.example.nomo.ui.addticket.AddEntryFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +57,11 @@ public class MainFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         setupBalanceCards(view);
+
+        ImageButton iconAddEntry = view.findViewById(R.id.iconAddEntry);
+        iconAddEntry.setOnClickListener(v -> {
+            ((MainActivity) requireActivity()).navigateToAddEntry();
+        });
     }
 
     private void initTestDebts() {
@@ -65,6 +74,27 @@ public class MainFragment extends Fragment {
 
     private void setupBalanceCards(View view) {
         String[] amounts = updateBalance();
+        boolean shouldUseVertical = amounts[0].length() > 6 || amounts[1].length() > 6;
+
+        ViewStub stub = view.findViewById(R.id.stubBalanceSection);
+        if (stub == null) {
+            ViewGroup container = view.findViewById(R.id.containerBalanceCards);
+            if (container != null) {
+                container.removeAllViews();
+            }
+        } else {
+            stub.setLayoutResource(shouldUseVertical ? R.layout.section_balance_vertical : R.layout.section_balance);
+            View inflatedView = stub.inflate();
+            Log.d("MainFragment", "balance section inflated");
+        }
+
+        ViewGroup container = view.findViewById(R.id.containerBalanceCards);
+
+        if (container == null) {
+            Log.e("MainFragment", "containerBalanceCards not found");
+            return;
+        }
+
         View cardYouOwe = view.findViewById(R.id.balanceYouOweCard);
         updateBalanceCard(
                 cardYouOwe,
@@ -111,8 +141,10 @@ public class MainFragment extends Fragment {
 
         for (Debt debt : allDebts) {
             try {
+                // Чистим строку от всех символов, кроме чисел и точки
                 String amountClean = debt.getAmount().replace("₽", "").replace(",", ".").replaceAll("\\s+", "");
                 double amount = Double.parseDouble(amountClean);
+
                 if (debt.isOwedToMe()) {
                     totalYouAreOwed += amount;
                 } else {
@@ -121,7 +153,21 @@ public class MainFragment extends Fragment {
             } catch (Exception ignored) {}
         }
 
-        return new String[] {Double.toString(totalYouOwe), Double.toString(totalYouAreOwed)};
+        // Форматируем числа: 1234.5 → "1 234,50₽"
+        return new String[]{
+                formatBalance(totalYouOwe),
+                formatBalance(totalYouAreOwed)
+        };
+    }
+
+    private String formatBalance(double val) {
+        if (val <  0) val = 0;
+
+        int intVal = (int) Math.floor(val);
+        int decimalVal = (int) Math.round((val - intVal) * 100);
+
+        String intFormatted = String.format("%,d", intVal).replace(',', ' ');
+        return String.format("%s,%02d₽", intFormatted, decimalVal);
     }
 
     private void updateBalanceCard(View cardView, String title, String amount, int bgColor, int lineColor) {
@@ -137,7 +183,7 @@ public class MainFragment extends Fragment {
 
         // Обновляем фон
         GradientDrawable newBackground = new GradientDrawable();
-        newBackground.setCornerRadius(10);
+        newBackground.setCornerRadius(15);
         newBackground.setColor(bgColor);
         cardView.setBackground(newBackground);
 

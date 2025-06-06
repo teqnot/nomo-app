@@ -1,60 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
 
     <!-- TopBar -->
-    <include layout="@layout/topbar_main"/>
-
-    <!-- ScrollView для прокрутки -->
-    <ScrollView
+    <include
+        layout="@layout/topbar_main"
+        android:id="@+id/include_topbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="12dp"/>
 
-        <LinearLayout
+    <!-- Секция с фиксированным приветствием, балансом и заголовком -->
+    <LinearLayout
+        android:id="@+id/staticContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/include_topbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/recyclerViewDebts"
+        app:layout_constraintVertical_chainStyle="spread_inside">
+
+        <!-- Приветствие -->
+        <include layout="@layout/item_greeting_user"/>
+
+        <!-- Разделитель -->
+        <View
+            android:id="@+id/dividerMainBalance"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_balances"
+            android:layout_marginVertical="8dp"/>
+
+        <!-- Баланс секции -->
+        <ViewStub
+            android:id="@+id/stubBalanceSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout="@layout/section_balance"
+            app:layout_constraintTop_toBottomOf="@id/include_topbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/recyclerViewDebts"
+            app:layout_constraintVertical_chainStyle="spread_inside"/>
+    </LinearLayout>
 
-            <!-- Приветствие -->
-            <include layout="@layout/item_greeting_user"/>
-            <TextView
-                android:id="@+id/textDebtsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Вам должны:"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:fontFamily="@font/sf_pro_display_bold"
-                android:layout_marginTop="24dp"/>
 
-            <!-- Разделитель -->
-            <View
-                android:id="@+id/dividerMainBalance"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/divider_balances"
-                android:layout_marginVertical="8dp"/>
-
-            <!-- Баланс -->
-            <include layout="@layout/section_balance"/>
-
-            <!-- Список долгов -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewDebts"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="16dp"/>
-        </LinearLayout>
-    </ScrollView>
+    <!-- RecyclerView - только она прокручивается -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewDebts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/staticContent"
+        app:layout_constraintBottom_toTopOf="@id/include_bottombar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1"/>
 
     <!-- BottomBar -->
-    <include layout="@layout/bottombar_main"/>
-</LinearLayout>
+    <include
+        layout="@layout/bottombar_main"
+        android:id="@+id/include_bottombar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="0dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

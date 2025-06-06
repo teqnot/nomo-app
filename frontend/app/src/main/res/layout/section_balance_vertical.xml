@@ -3,41 +3,34 @@
     android:id="@+id/containerBalanceCards"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:weightSum="2"
+    android:orientation="vertical"
     android:padding="8dp">
 
-    <!-- Карточка "Вы должны" -->
     <FrameLayout
         android:id="@+id/cardYouOwe"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackground">
 
-        <include
-            layout="@layout/fragment_balance_card"
+        <include layout="@layout/fragment_balance_card"
             android:id="@+id/balanceYouOweCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </FrameLayout>
 
-    <!-- Карточка "Вам должны" -->
     <FrameLayout
         android:id="@+id/cardYouAreOwed"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackground">
 
-        <include
-            layout="@layout/fragment_balance_card"
+        <include layout="@layout/fragment_balance_card"
             android:id="@+id/balanceYouAreOwedCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

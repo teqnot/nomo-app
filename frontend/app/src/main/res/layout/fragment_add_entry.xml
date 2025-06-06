@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:fitsSystemWindows="true">
 
     <!-- Create Room Section -->
     <LinearLayout
@@ -64,23 +65,31 @@
             android:visibility="gone"
             android:layout_marginTop="16dp">
 
-            <EditText
+            <com.example.nomo.ui.common.CustomEditText
                 android:id="@+id/editTextRoomName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="Название"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_tag"
+                android:drawableLeft="@drawable/ic_dollar"
+                android:drawablePadding="8dp"
                 android:textSize="16sp"
-                android:layout_marginBottom="16dp"/>
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:padding="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent"/>
 
-            <EditText
+            <com.example.nomo.ui.common.CustomEditText
                 android:id="@+id/editTextRoomDescription"
-                android:hint="Описание"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_description"
+                android:hint="Описание"
+                android:drawableLeft="@drawable/ic_dollar"
+                android:drawablePadding="8dp"
                 android:textSize="16sp"
-                android:layout_marginBottom="16dp"/>
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:padding="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent"/>
 
             <LinearLayout
                 android:id="@+id/buttonSelectFriendsRoom"
@@ -177,23 +186,31 @@
             android:visibility="gone"
             android:layout_marginTop="16dp">
 
-            <EditText
+            <com.example.nomo.ui.common.CustomEditText
                 android:id="@+id/editTextEntryName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="Название"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_tag"
+                android:drawableLeft="@drawable/ic_dollar"
+                android:drawablePadding="8dp"
                 android:textSize="16sp"
-                android:layout_marginBottom="16dp"/>
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:padding="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent"/>
 
-            <EditText
+            <com.example.nomo.ui.common.CustomEditText
                 android:id="@+id/editTextEntryDescription"
-                android:hint="Описание"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_description"
+                android:hint="Название"
+                android:drawableLeft="@drawable/ic_dollar"
+                android:drawablePadding="8dp"
                 android:textSize="16sp"
-                android:layout_marginBottom="16dp"/>
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:padding="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent"/>
 
             <LinearLayout
                 android:id="@+id/buttonSelectFriendEntry"
