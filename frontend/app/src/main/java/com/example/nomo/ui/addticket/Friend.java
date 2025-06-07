@@ -1,19 +1,42 @@
 package com.example.nomo.ui.addticket;
 
 public class Friend {
-    private long id;
     private String username;
+    private boolean isSelected;
+    private boolean isSaved;
+    private String amount = "";
 
-    public Friend(long id, String username) {
-        this.id = id;
+    public Friend(String username) {
         this.username = username;
-    }
-
-    public long getId() {
-        return id;
+        this.isSelected = false;
+        this.isSaved = false;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isSaved() {
+        return isSaved;
+    }
+
+    public void setSaved(boolean saved) {
+        isSaved = saved;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
     }
 }

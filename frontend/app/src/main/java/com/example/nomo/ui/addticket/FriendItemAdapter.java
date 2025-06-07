@@ -4,101 +4,120 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class FriendItemAdapter extends ArrayAdapter<Friend> {
+public class FriendItemAdapter extends RecyclerView.Adapter<FriendItemAdapter.FriendViewHolder> {
+    private final Context context;
+    private final List<Friend> friends;
+    private final int selectionMode;
 
-    private Context context;
-    private List<Friend> friends;
-    private int selectionMode;
-    private OnSingleFriendSelectedListener onSingleFriendSelected;
-    private OnMultipleFriendsSelectedListener onMultipleFriendsSelected;
-    private OnFriendUnselectedListener onFriendUnselected;
-
-    public interface OnSingleFriendSelectedListener {
-        void onSingleFriendSelected(FriendWithDebt friendWithDebt);
-    }
-
-    public interface OnMultipleFriendsSelectedListener {
-        void onMultipleFriendsSelected(List<Friend> selectedFriends);
-    }
-
-    public interface OnFriendUnselectedListener {
-        void onFriendUnselected();
-    }
-
-    public FriendItemAdapter(
-            Context context,
-            List<Friend> friends,
-            int selectionMode,
-            OnSingleFriendSelectedListener singleListener,
-            OnMultipleFriendsSelectedListener multipleListener,
-            OnFriendUnselectedListener unselectedListener
-    ) {
-        super(context, R.layout.item_friend, friends);
+    public FriendItemAdapter(Context context, List<Friend> friends, int selectionMode) {
         this.context = context;
         this.friends = friends;
         this.selectionMode = selectionMode;
-        this.onSingleFriendSelected = singleListener;
-        this.onMultipleFriendsSelected = multipleListener;
-        this.onFriendUnselected = unselectedListener;
-    }
-
-    @Override
-    public int getCount() {
-        return friends.size();
-    }
-
-    @Override
-    public Friend getItem(int position) {
-        return friends.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_friend, parent, false);
-        }
+    public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
+        return new FriendViewHolder(view);
+    }
 
+    @Override
+    public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
         Friend friend = friends.get(position);
 
-        TextView textView = convertView.findViewById(R.id.textFriendName);
-        textView.setText(friend.getUsername());
+        holder.textUsername.setText(friend.getUsername());
+        boolean isSelected = friend.isSelected();
 
-        convertView.setOnClickListener(v -> {
-            if (selectionMode == FriendSelectionMode.SINGLE && onSingleFriendSelected != null) {
-                onSingleFriendSelected.onSingleFriendSelected(new FriendWithDebt(friend));
-            } else if (selectionMode == FriendSelectionMode.MULTIPLE && onMultipleFriendsSelected != null) {
-                if (friends.contains(friend)) {
-                    friends.remove(friend);
-                    onMultipleFriendsSelected.onMultipleFriendsSelected(friends);
-                } else {
-                    friends.add(friend);
-                    onMultipleFriendsSelected.onMultipleFriendsSelected(friends);
+        if (selectionMode == FriendSelectionMode.SINGLE) {
+            holder.iconCheck.setImageResource(isSelected ? R.drawable.ic_check : R.drawable.ic_plus);
+            holder.iconCheck.setColorFilter(
+                    context.getResources().getColor(
+                            isSelected
+                                    ? R.color.secondary_text_on_hover
+                                    : R.color.secondary_text_on_background
+                    )
+            );
+        } else {
+            holder.iconCheck.setImageResource(isSelected ? R.drawable.ic_check : R.drawable.ic_plus);
+            holder.iconCheck.setVisibility(View.VISIBLE);
+        }
+
+        if (selectionMode == FriendSelectionMode.SINGLE && isSelected && !friend.isSaved()) {
+            holder.dropdownInput.setVisibility(View.VISIBLE);
+        } else {
+            holder.dropdownInput.setVisibility(View.GONE);
+        }
+
+        holder.friendRow.setOnClickListener(v -> {
+            if (selectionMode == FriendSelectionMode.SINGLE) {
+                boolean wasSelected = friend.isSelected();
+
+                for (Friend f : friends) {
+                    f.setSelected(false);
                 }
-                notifyDataSetChanged();
-            }
 
-            if (onFriendUnselected != null) {
-                onFriendUnselected.onFriendUnselected();
+                if (!wasSelected) {
+                    friend.setSelected(true);
+                } else {
+                    friend.setSelected(false);
+                }
+
+                notifyDataSetChanged();
+            } else {
+                // MULTIPLE
+                friend.setSelected(!friend.isSelected());
+                notifyDataSetChanged();
             }
         });
 
-        return convertView;
+        holder.buttonSaveDebt.setOnClickListener(v -> {
+            String amount = holder.editTextSum.getText().toString().trim();
+            if (!amount.isEmpty()) {
+                friend.setAmount(amount);
+                friend.setSaved(true);
+                notifyDataSetChanged(); // Прячем dropdown после сохранения
+            } else {
+                Toast.makeText(context, "Введите сумму", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return friends.size();
+    }
+
+    static class FriendViewHolder extends RecyclerView.ViewHolder {
+        TextView textUsername;
+        ImageView iconCheck;
+        LinearLayout dropdownInput;
+        LinearLayout friendRow;
+        EditText editTextSum;
+        Button buttonSaveDebt;
+
+        public FriendViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textUsername = itemView.findViewById(R.id.textUsername);
+            iconCheck = itemView.findViewById(R.id.iconCheck);
+            dropdownInput = itemView.findViewById(R.id.dropdownInput);
+            friendRow = itemView.findViewById(R.id.friendRow);
+            editTextSum = itemView.findViewById(R.id.editTextSum);
+            buttonSaveDebt = itemView.findViewById(R.id.buttonSaveDebt);
+        }
     }
 }

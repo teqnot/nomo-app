@@ -9,9 +9,23 @@ public class FriendWithDebt {
         this.friend = friend;
     }
 
-    public Friend getFriend() { return friend; }
-    public String getAmount() { return amount; }
-    public void setAmount(String amount) { this.amount = amount; }
-    public boolean isSaved() { return isSaved; }
-    public void setSaved(boolean saved) { isSaved = saved; }
+    public Friend getFriend() {
+        return friend;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public boolean isSaved() {
+        return isSaved;
+    }
+
+    public void setSaved(boolean saved) {
+        isSaved = saved;
+    }
 }

@@ -27,6 +27,8 @@
             android:src="@drawable/ic_bottombar_add"
             android:background="@drawable/bg_bottombar_circle"
             android:contentDescription="Добавить запись"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:focusable="true"/>
     </FrameLayout>
 </FrameLayout>

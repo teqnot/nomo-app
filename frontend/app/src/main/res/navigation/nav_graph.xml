@@ -9,26 +9,29 @@
         android:id="@+id/mainFragment"
         android:name="com.example.nomo.ui.mainpage.MainFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main">
+
+        <!-- Переход к AddEntryFragment -->
+        <action
+            android:id="@+id/action_main_to_add_entry"
+            app:destination="@id/addEntryFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
+    </fragment>
 
     <fragment
         android:id="@+id/addEntryFragment"
         android:name="com.example.nomo.ui.addticket.AddEntryFragment"
         android:label="AddEntryFragment"
-        tools:layout="@layout/fragment_add_entry" />
-
-<!--    <fragment-->
-<!--        android:id="@+id/addEntryFragment"-->
-<!--        android:name="com.example.nomo.ui.addentry.AddEntryFragment"-->
-<!--        android:label="Добавить запись" />-->
-
-<!--    <fragment-->
-<!--        android:id="@+id/roomFragment"-->
-<!--        android:name="com.example.nomo.ui.room.RoomFragment"-->
-<!--        android:label="Комната" />-->
-
-<!--    <fragment-->
-<!--        android:id="@+id/debtsFragment"-->
-<!--        android:name="com.example.nomo.ui.debts.DebtsFragment"-->
-<!--        android:label="Долги" />-->
+        tools:layout="@layout/fragment_add_entry">
+        <action
+            android:id="@+id/action_add_entry_to_main"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
+    </fragment>
 </navigation>

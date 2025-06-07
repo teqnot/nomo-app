@@ -1,11 +1,17 @@
 package com.example.nomo;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.nomo.ui.addticket.AddEntryFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,21 +22,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Получаем NavHostFragment
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
 
         if (navHostFragment != null) {
-            navController = navHostFragment.getNavController();
+            NavController navController = navHostFragment.getNavController();
+
+            navController.addOnDestinationChangedListener((nav, destination, arguments) -> {
+                ImageButton iconAddEntry = findViewById(R.id.iconAddEntry);
+                if (destination.getId() == R.id.mainFragment) {
+                    iconAddEntry.setVisibility(View.VISIBLE);
+                    iconAddEntry.setOnClickListener(v -> {
+                        Log.d("MainActivity", "Nav to AddEntry");
+                        nav.navigate(R.id.action_main_to_add_entry);
+                    });
+                } else if (destination.getId() == R.id.addEntryFragment) {
+                    iconAddEntry.setVisibility(View.VISIBLE);
+                    iconAddEntry.setOnClickListener(v -> {
+                        Log.d("MainActivity", "Nav to Main");
+                        nav.navigate(R.id.action_add_entry_to_main);
+                    });
+                }
+            });
         }
     }
 
-    // Метод для перехода на AddEntryFragment
-    public void navigateToAddEntry() {
-        if (navController != null && navController.getCurrentDestination() != null) {
-            navController.navigate(R.id.addEntryFragment);
-        } else {
-            Toast.makeText(this, "NavController не готов", Toast.LENGTH_SHORT).show();
-        }
+    private Fragment getCurrentFragment() {
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+
+        return navHostFragment != null ?
+                navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment() : null;
     }
 }

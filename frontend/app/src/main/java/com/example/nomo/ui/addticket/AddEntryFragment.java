@@ -1,19 +1,23 @@
 package com.example.nomo.ui.addticket;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
 
@@ -23,8 +27,9 @@ import java.util.List;
 
 public class AddEntryFragment extends Fragment {
 
-    private boolean isRoomExpanded = false;
-    private boolean isEntryExpanded = false;
+    private static final String ARG_MODE = "selection_mode"; // "mode" для передачи
+
+    private int selectionMode; // SINGLE или MULTIPLE
 
     // UI Elements
     private LinearLayout sectionCreateRoom;
@@ -41,7 +46,15 @@ public class AddEntryFragment extends Fragment {
     private LinearLayout selectedFriendContainer;
 
     private List<Friend> selectedUsers = new ArrayList<>();
-    private FriendWithDebt selectedFriend = null;
+    private FriendWithDebt selectedFriendWithDebt = null;
+
+    public static AddEntryFragment newInstance(int mode) {
+        Bundle args = new Bundle();
+        args.putInt(ARG_MODE, mode);
+        AddEntryFragment fragment = new AddEntryFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -67,6 +80,13 @@ public class AddEntryFragment extends Fragment {
         textAddUserEntry = view.findViewById(R.id.textAddUserEntry);
         selectedFriendContainer = view.findViewById(R.id.selectedFriendContainer);
 
+        // Получаем режим из аргументов
+        if (getArguments() != null) {
+            selectionMode = getArguments().getInt(ARG_MODE, FriendSelectionMode.SINGLE);
+        } else {
+            selectionMode = FriendSelectionMode.SINGLE; // по умолчанию
+        }
+
         // Обработчики кликов по секциям
         sectionCreateRoom.setOnClickListener(v -> {
             isRoomExpanded = !isRoomExpanded;
@@ -86,75 +106,56 @@ public class AddEntryFragment extends Fragment {
             }
         });
 
-        // Клик на "Добавить пользователей" в комнату
-        view.findViewById(R.id.buttonSelectFriendsRoom).setOnClickListener(v ->
-                showFriendSelectionDialog(FriendSelectionMode.SINGLE)
-        );
+        view.findViewById(R.id.buttonSelectFriendsRoom).setOnClickListener(v -> {
+            showFriendSelectionDialog(FriendSelectionMode.MULTIPLE);
+        });
 
-        // Клик на "Добавить пользователя" в запись
-        view.findViewById(R.id.buttonSelectFriendEntry).setOnClickListener(v ->
-                showFriendSelectionDialog(FriendSelectionMode.SINGLE)
-        );
+        view.findViewById(R.id.buttonSelectFriendEntry).setOnClickListener(v -> {
+            showFriendSelectionDialog(FriendSelectionMode.SINGLE);
+        });
     }
 
-    private void showFriendSelectionDialog(int selectionMode) {
+    private boolean isRoomExpanded = false;
+    private boolean isEntryExpanded = false;
+
+    private void showFriendSelectionDialog(int mode) {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_friend_selection);
 
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setGravity(Gravity.CENTER);
+        }
+
         TextView title = dialog.findViewById(R.id.title);
-        ListView listView = dialog.findViewById(R.id.listFriends);
-        LinearLayout dropdownInput = dialog.findViewById(R.id.dropdownInput);
-        EditText editTextAmount = dialog.findViewById(R.id.editTextDebtAmount);
-        Button buttonSave = dialog.findViewById(R.id.buttonSaveDebt);
-        Button buttonDone = dialog.findViewById(R.id.buttonDone);
+        RecyclerView recyclerView = dialog.findViewById(R.id.recyclerViewFriends);
+        TextView buttonDone = dialog.findViewById(R.id.buttonDone);
 
-        // Настройка заголовка
-        title.setText(selectionMode == FriendSelectionMode.SINGLE ?
-                "Выберите пользователя" :
-                "Добавьте пользователей");
+        title.setText(mode == FriendSelectionMode.SINGLE ? "Выберите пользователя" : "Добавьте пользователей");
 
-        // Тестовые данные
         List<Friend> friends = getTestFriends();
 
-        FriendItemAdapter adapter = new FriendItemAdapter(
-                requireContext(),
-                friends,
-                selectionMode,
-                friendWithDebt -> {
-                    selectedFriend = friendWithDebt;
-                    dropdownInput.setVisibility(View.VISIBLE);
-                },
-                selectedFriends -> {
-                    updateSelectedUsersUI();
-                    dialog.dismiss();
-                },
-                () -> {
-                    selectedFriend = null;
-                    dialog.dismiss();
-                }
-        );
-        listView.setAdapter(adapter);
+        FriendItemAdapter adapter = new FriendItemAdapter(requireContext(), friends, mode);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setAdapter(adapter);
 
-        listView.setAdapter(adapter);
-
-        // Сохранение долга
-        buttonSave.setOnClickListener(v -> {
-            String amount = editTextAmount.getText().toString();
-            if (!amount.isEmpty() && selectedFriend != null) {
-                selectedFriend.setAmount(amount);
-                selectedFriend.setSaved(true);
-                updateSelectedFriendUI(selectedFriend);
-                dialog.dismiss();
-            }
-        });
-
-        // Готово
         buttonDone.setOnClickListener(v -> {
-            if (selectionMode == FriendSelectionMode.SINGLE && selectedFriend != null) {
-                updateSelectedFriendUI(selectedFriend);
-            } else if (selectionMode == FriendSelectionMode.MULTIPLE && !selectedUsers.isEmpty()) {
-                updateSelectedUsersUI();
+            List<Friend> selectedList = new ArrayList<>();
+            for (Friend friend : friends) {
+                if (friend.isSaved()) {
+                    selectedList.add(friend);
+                }
             }
+
+            if (mode == FriendSelectionMode.SINGLE && !selectedList.isEmpty()) {
+                Friend selected = selectedList.get(0);
+                ((AddEntryFragment) requireParentFragment()).updateSelectedFriendUI(selected);
+            } else if (mode == FriendSelectionMode.MULTIPLE) {
+                ((AddEntryFragment) requireParentFragment()).updateSelectedUsersUI(selectedList);
+            }
+
             dialog.dismiss();
         });
 
@@ -163,21 +164,22 @@ public class AddEntryFragment extends Fragment {
 
     private List<Friend> getTestFriends() {
         return Arrays.asList(
-                new Friend(22, "testingNewFunctions"),
-                new Friend(23, "testingNewFunctions2"),
-                new Friend(24, "Alex"),
-                new Friend(25, "Max")
+                new Friend( "testingNewFunctions"),
+                new Friend("testingNewFunctions2"),
+                new Friend("Alex"),
+                new Friend("Max")
         );
     }
 
-    private void updateSelectedFriendUI(FriendWithDebt friendWithDebt) {
+    private void updateSelectedFriendUI(Friend friendWithDebt) {
         selectedFriendContainer.removeAllViews();
+
         TextView textView = new TextView(requireContext());
-        textView.setText(friendWithDebt.getFriend().getUsername() + ": " + friendWithDebt.getAmount());
+        textView.setText(friendWithDebt.getUsername() + ": " + friendWithDebt.getAmount());
         selectedFriendContainer.addView(textView);
     }
 
-    private void updateSelectedUsersUI() {
+    private void updateSelectedUsersUI(List<Friend> selectedUsers) {
         selectedUsersContainer.removeAllViews();
         for (Friend friend : selectedUsers) {
             TextView textView = new TextView(requireContext());

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <!-- NavHostFragment - здесь будут фрагменты -->
     <fragment
@@ -14,4 +15,11 @@
         android:layout_weight="1"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
+
+    <include
+        layout="@layout/bottombar_main"
+        android:id="@+id/include_bottombar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"/>
 </LinearLayout>

@@ -47,21 +47,14 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Инициализация тестовых данных
         initTestDebts();
 
-        // Настройка RecyclerView
         recyclerView = view.findViewById(R.id.recyclerViewDebts);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new DebtListAdapter(filteredDebts);
         recyclerView.setAdapter(adapter);
 
         setupBalanceCards(view);
-
-        ImageButton iconAddEntry = view.findViewById(R.id.iconAddEntry);
-        iconAddEntry.setOnClickListener(v -> {
-            ((MainActivity) requireActivity()).navigateToAddEntry();
-        });
     }
 
     private void initTestDebts() {
