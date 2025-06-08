@@ -1,7 +1,5 @@
 package com.example.nomo.ui.mainpage;
 
-import static android.text.TextUtils.replace;
-
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,31 +7,37 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.nomo.MainActivity;
 import com.example.nomo.R;
-import com.example.nomo.adapter.DebtListAdapter;
 import com.example.nomo.model.Debt;
-import com.example.nomo.ui.addticket.AddEntryFragment;
+import com.example.nomo.model.DebtItem;
+import com.example.nomo.utils.DebtMapper;
+import com.example.nomo.utils.SharedPrefManager;
+import com.example.nomo.viewmodel.DebtViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private DebtListAdapter adapter;
     private List<Debt> allDebts = new ArrayList<>();
     private List<Debt> filteredDebts = new ArrayList<>();
+    private SharedPrefManager sharedPrefManager;
+    private DebtViewModel debtViewModel;
 
     @Nullable
     @Override
@@ -47,22 +51,38 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initTestDebts();
+        sharedPrefManager = new SharedPrefManager(requireContext());
+
+        TextView textGreeting = view.findViewById(R.id.textGreeting);
+        String username = sharedPrefManager.getUsername();
+        textGreeting.setText("\uD83D\uDC4B Добрый день, " + username);
+
+        debtViewModel = new ViewModelProvider(this).get(DebtViewModel.class);
 
         recyclerView = view.findViewById(R.id.recyclerViewDebts);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new DebtListAdapter(filteredDebts);
         recyclerView.setAdapter(adapter);
 
-        setupBalanceCards(view);
-    }
+        debtViewModel.getDebtList().observe(getViewLifecycleOwner(), debtItems -> {
+            if (debtItems != null && !debtItems.isEmpty()) {
+                allDebts.clear();
+                long userId = sharedPrefManager.getUserId();
 
-    private void initTestDebts() {
-        allDebts.clear();
-        allDebts.add(new Debt("Иван Борисов", "331₽", false));
-        allDebts.add(new Debt("Илья Макаров", "8912₽", true));
-        allDebts.add(new Debt("Артем Рожков", "87 091₽", true));
-        filteredDebts.addAll(allDebts);
+                for (DebtItem item : debtItems) {
+                    allDebts.add(DebtMapper.fromDebtItem(item, userId));
+                }
+
+                Log.d("Debt Received", allDebts.get(0).getName() + " " + allDebts.get(0).getAmount());
+
+                filteredDebts.clear();
+                filteredDebts.addAll(allDebts);
+                adapter.updateDebts(filteredDebts);
+                setupBalanceCards(view);
+            }
+        });
+
+        debtViewModel.loadDebts();
     }
 
     private void setupBalanceCards(View view) {

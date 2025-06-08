@@ -25,6 +25,9 @@ public class Debt {
     @JoinColumn(name = "debtor_id")
     private User debtor;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "amount", nullable = false)
     private Double amount;
 

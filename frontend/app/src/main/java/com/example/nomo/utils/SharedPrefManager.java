@@ -29,6 +29,26 @@ public class SharedPrefManager {
         sharedPreferences.edit().remove("access_token").apply();
     }
 
+    public void saveUserId(Long userId) {
+        sharedPreferences.edit().putLong("user_id", userId).apply();
+    }
+
+    public Long getUserId() {
+        return sharedPreferences.getLong("user_id", -1);
+    }
+
+    public void saveUsername(String username) {
+        sharedPreferences.edit().putString("username", username).apply();
+    }
+
+    public String getUsername() {
+        return sharedPreferences.getString("username", "пользователь");
+    }
+
+    public void clearAll() {
+        sharedPreferences.edit().clear().apply();
+    }
+
     public boolean isLoggedIn() {
         return getToken() != null;
     }

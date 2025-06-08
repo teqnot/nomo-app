@@ -1,13 +1,12 @@
-package com.example.nomo.adapter;
+package com.example.nomo.ui.mainpage;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.nomo.R;
 import com.example.nomo.model.Debt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DebtListAdapter extends RecyclerView.Adapter<DebtListAdapter.DebtViewHolder> {
@@ -26,12 +26,14 @@ public class DebtListAdapter extends RecyclerView.Adapter<DebtListAdapter.DebtVi
     private Context context;
 
     public DebtListAdapter(List<Debt> debts) {
-        this.debts = debts;
+        this.debts = new ArrayList<>(debts);
     }
 
     public void updateDebts(List<Debt> newDebts) {
-        this.debts.clear();
-        this.debts.addAll(newDebts);
+        Log.d("Debts", newDebts.get(0).getName() + " " + newDebts.get(0).getAmount());
+        debts.clear();
+        debts.addAll(newDebts);
+        Log.d("Debts", debts.get(0).getName() + " " + debts.get(0).getAmount());
         notifyDataSetChanged();
     }
 

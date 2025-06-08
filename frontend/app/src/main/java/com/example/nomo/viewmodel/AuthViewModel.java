@@ -15,9 +15,7 @@ import com.example.nomo.utils.SharedPrefManager;
 
 import javax.inject.Inject;
 
-import dagger.Provides;
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,6 +53,8 @@ public class AuthViewModel extends AndroidViewModel {
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     sharedPrefManager.saveToken(response.body().getAccessToken());
+                    sharedPrefManager.saveUserId(response.body().getUserId());
+                    sharedPrefManager.saveUsername(nickname);
                     registerSuccess.postValue(true);
                 } else {
                     registerSuccess.postValue(false);
@@ -76,6 +76,8 @@ public class AuthViewModel extends AndroidViewModel {
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     sharedPrefManager.saveToken(response.body().getAccessToken());
+                    sharedPrefManager.saveUserId(response.body().getUserId());
+                    sharedPrefManager.saveUsername(nickname);
                     loginSuccess.postValue(true);
                 } else {
                     loginSuccess.postValue(false);

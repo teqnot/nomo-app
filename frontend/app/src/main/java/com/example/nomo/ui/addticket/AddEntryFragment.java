@@ -17,16 +17,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
+import com.example.nomo.viewmodel.DebtViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AddEntryFragment extends Fragment {
 
     private static final String ARG_MODE = "selection_mode"; // "mode" для передачи
@@ -49,6 +54,7 @@ public class AddEntryFragment extends Fragment {
 
     private List<Friend> selectedUsers = new ArrayList<>();
     private FriendWithDebt selectedFriendWithDebt = null;
+    private DebtViewModel debtViewModel;
 
     public static AddEntryFragment newInstance(int mode) {
         Bundle args = new Bundle();
@@ -79,6 +85,8 @@ public class AddEntryFragment extends Fragment {
         editTextEntryName = view.findViewById(R.id.editTextEntryName);
         editTextEntryDescription = view.findViewById(R.id.editTextEntryDescription);
         textAddUserEntry = view.findViewById(R.id.textAddUserEntry);
+
+        debtViewModel = new ViewModelProvider(this).get(DebtViewModel.class);
 
         // Получаем режим из аргументов
         if (getArguments() != null) {

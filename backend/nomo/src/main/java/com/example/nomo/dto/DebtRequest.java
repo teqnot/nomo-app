@@ -4,6 +4,7 @@ public class DebtRequest {
     private Long debtorId;
     private Long creditorId;
     private Double amount;
+    private String name;
     private String description;
     private Long roomId;
 
@@ -16,8 +17,11 @@ public class DebtRequest {
     public Double getAmount() { return amount; }
     public void setAmount(Double amount) { this.amount = amount; }
 
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
     public String getDescription() { return description; };
-    public void setRequestDescription() { this.description = description; }
+    public void setRequestDescription(String description) { this.description = description; }
 
     public Long getRoomId() { return roomId; }
     public void setRequestRoomId(Long roomId) { this.roomId = roomId; }

@@ -13,6 +13,7 @@ public class DebtDto {
     private Long debtorId;
     private String debtorUsername;
     private Double amount;
+    private String name;
     private String description;
     private boolean isPaid;
     private LocalDateTime createdAt;
@@ -22,13 +23,15 @@ public class DebtDto {
 
     public DebtDto(Long id, Long creditorId, String creditorUsername,
                            Long debtorId, String debtorUsername, Double amount,
-                           String description, Boolean isPaid, Long roomId, LocalDateTime createdAt) {
+                           String description, String name, Boolean isPaid,
+                   Long roomId, LocalDateTime createdAt) {
         this.id = id;
         this.creditorId = creditorId;
         this.creditorUsername = creditorUsername;
         this.debtorId = debtorId;
         this.debtorUsername = debtorUsername;
         this.amount = amount;
+        this.name = name;
         this.description = description;
         this.isPaid = isPaid;
         this.roomId = roomId;
@@ -83,6 +86,10 @@ public class DebtDto {
         this.amount = amount;
     }
 
+    public void setName(String name) { this.name = name; }
+
+    public String getName() { return name; }
+
     public String getDescription() {
         return description;
     }
@@ -127,6 +134,7 @@ public class DebtDto {
         response.put("creditor", creditor);
         response.put("debtor", debtor);
         response.put("amount", debt.getAmount());
+        response.put("name", debt.getName());
         response.put("description", debt.getDescription());
         response.put("createdAt", debt.getCreatedAt());
 

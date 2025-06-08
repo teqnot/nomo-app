@@ -3,6 +3,7 @@ package com.example.nomo.controller;
 import com.example.nomo.dto.LoginRequest;
 import com.example.nomo.dto.RegisterRequest;
 import com.example.nomo.model.User;
+import com.example.nomo.repository.UserRepository;
 import com.example.nomo.service.CustomUserDetailsService;
 import com.example.nomo.service.UserService;
 import com.example.nomo.util.JwtUtil;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -31,8 +33,17 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public AuthController(UserService userService) {
+    @Autowired
+    private UserRepository userRepository;
+
+    public AuthController(UserService userService,
+                          AuthenticationManager authenticationManager,
+                          CustomUserDetailsService customUserDetailsService,
+                          JwtUtil jwtUtil) {
         this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.customUserDetailsService = customUserDetailsService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -45,11 +56,14 @@ public class AuthController {
 
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getNickname());
         final String jwt = jwtUtil.generateToken(userDetails);
+        User user = userRepository.findByUsername(request.getNickname())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + request.getNickname()));
 
         Map<String, Object> response = new HashMap<>();
         response.put("access_token", jwt);
         response.put("token_type", "Bearer");
         response.put("expires_in", jwtUtil.extractExpiration(jwt).getTime() - System.currentTimeMillis());
+        response.put("user_id", user.getId());
 
         return ResponseEntity.ok(response);
     }
@@ -66,8 +80,12 @@ public class AuthController {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
 
             String jwt = jwtUtil.generateToken(userDetails);
+            Map<String, Object> response = new HashMap<>();
 
-            return ResponseEntity.ok().body("{ \"access_token\": \"" + jwt + "\" }");
+            response.put("access_token", jwt);
+            response.put("user_id", user.getId());
+
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

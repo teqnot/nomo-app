@@ -26,7 +26,7 @@ public class DebtService {
         this.roomRepository = roomRepository;
     }
 
-    public Debt createDebt(Long debtorId, Long creditorId, Double amount, String description, Long roomId) {
+    public Debt createDebt(Long debtorId, Long creditorId, Double amount, String name, String description, Long roomId) {
         System.out.println("DebtorId: " + debtorId);
         User debtor = userRepository.findById(debtorId).orElseThrow();
         User creditor = userRepository.findById(creditorId).orElseThrow();
@@ -40,6 +40,7 @@ public class DebtService {
         debt.setDebtor(debtor);
         debt.setCreditor(creditor);
         debt.setAmount(amount);
+        debt.setName(name);
         debt.setDescription(description);
         debt.setRoom(room);
         debt.setIsPaid(false);
@@ -56,12 +57,20 @@ public class DebtService {
 
     public List<DebtDto> getDebtsByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
-        List<Debt> debts = debtRepository.findByDebtor(user);
+        List<Debt> debtsFromMe = debtRepository.findByDebtor(user);
+        List<Debt> debtsToMe = debtRepository.findByCreditor(user);
         List<DebtDto> debtDtos = new ArrayList<>();
-        for (Debt debt : debts) {
-            DebtDto dto = convertToDto(debt);
-            debtDtos.add(dto);
+
+        for (Debt debt : debtsFromMe) {
+            DebtDto dtoFromMe = convertToDto(debt);
+            debtDtos.add(dtoFromMe);
         }
+
+        for (Debt debt : debtsToMe) {
+            DebtDto dtoToMe = convertToDto(debt);
+            debtDtos.add(dtoToMe);
+        }
+
         return debtDtos;
     }
 
@@ -73,6 +82,7 @@ public class DebtService {
         dto.setDebtorId(debt.getDebtor().getId());
         dto.setDebtorUsername(debt.getDebtor().getUsername());
         dto.setAmount(debt.getAmount());
+        dto.setName(debt.getName());
         dto.setDescription(debt.getDescription());
         dto.setIsPaid(debt.getIsPaid());
         dto.setCreatedAt(debt.getCreatedAt());

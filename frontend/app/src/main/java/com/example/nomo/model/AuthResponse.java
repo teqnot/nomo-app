@@ -4,6 +4,7 @@ public class AuthResponse {
     private String access_token;
     private String token_type;
     private int expires_in;
+    private Long user_id;
 
     public String getAccessToken() {
         return access_token;
@@ -15,5 +16,9 @@ public class AuthResponse {
 
     public int getExpiresIn() {
         return expires_in;
+    }
+
+    public Long getUserId() {
+        return user_id;
     }
 }

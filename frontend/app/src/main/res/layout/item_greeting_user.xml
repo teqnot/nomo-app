@@ -15,7 +15,6 @@
         android:id="@+id/textGreeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="👋 Добрый день, пользователь"
         android:textSize="20sp"
         android:textColor="@color/black"
         android:fontFamily="@font/sf_pro_display_bold"
