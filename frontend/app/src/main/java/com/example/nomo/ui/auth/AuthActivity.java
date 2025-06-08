@@ -8,6 +8,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nomo.R;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AuthActivity extends AppCompatActivity {
 
     @Override

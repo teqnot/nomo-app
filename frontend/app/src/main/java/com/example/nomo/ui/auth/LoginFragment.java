@@ -12,12 +12,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.nomo.MainActivity;
 import com.example.nomo.R;
 import com.example.nomo.viewmodel.AuthViewModel;
 import com.example.nomo.utils.Validators;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class LoginFragment extends Fragment {
 
     private EditText editTextNickname;
@@ -41,8 +45,16 @@ public class LoginFragment extends Fragment {
         Button buttonLogin = view.findViewById(R.id.buttonLogin);
         Button buttonRegister = view.findViewById(R.id.buttonRegister);
 
-        // TODO: Используйте Hilt или DI, если подключено
-        authViewModel = new AuthViewModel(); // Заглушка
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+
+        authViewModel.getLoginSuccess().observe(getViewLifecycleOwner(), success -> {
+            if (Boolean.TRUE.equals(success)) {
+                startActivity(new Intent(requireContext(), MainActivity.class));
+                requireActivity().finish();
+            } else {
+                Toast.makeText(requireContext(), "Ошибка входа!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         view.findViewById(R.id.buttonBack).setOnClickListener(v -> {
             getParentFragmentManager().popBackStack();
@@ -57,16 +69,11 @@ public class LoginFragment extends Fragment {
             } else if (!Validators.isValidPassword(password)) {
                 Toast.makeText(requireContext(), "Пароль должен быть не менее 6 символов", Toast.LENGTH_LONG).show();
             } else {
-                // TODO: Вызов API авторизации
-                Toast.makeText(requireContext(), "Авторизация успешна!", Toast.LENGTH_SHORT).show();
-
-                // Перейти на main экран
-                startActivity(new Intent(requireContext(), MainActivity.class));
-                requireActivity().finish();
+                authViewModel.loginUser(nickname, password, requireContext());
             }
         });
 
-// Переход на регистрацию
+        // Переход на регистрацию
         view.findViewById(R.id.buttonRegister).setOnClickListener(v -> {
             ((AuthActivity) requireActivity()).navigateToFragment(new RegistrationFragment(), "login_to_register");
         });
