@@ -15,6 +15,7 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.example.nomo.R;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class AddEntryFragment extends Fragment {
 
@@ -74,11 +76,9 @@ public class AddEntryFragment extends Fragment {
         editTextRoomName = view.findViewById(R.id.editTextRoomName);
         editTextRoomDescription = view.findViewById(R.id.editTextRoomDescription);
         textAddUserRoom = view.findViewById(R.id.textAddUserRoom);
-        selectedUsersContainer = view.findViewById(R.id.selectedUsersContainer);
         editTextEntryName = view.findViewById(R.id.editTextEntryName);
         editTextEntryDescription = view.findViewById(R.id.editTextEntryDescription);
         textAddUserEntry = view.findViewById(R.id.textAddUserEntry);
-        selectedFriendContainer = view.findViewById(R.id.selectedFriendContainer);
 
         // Получаем режим из аргументов
         if (getArguments() != null) {
@@ -144,16 +144,18 @@ public class AddEntryFragment extends Fragment {
         buttonDone.setOnClickListener(v -> {
             List<Friend> selectedList = new ArrayList<>();
             for (Friend friend : friends) {
-                if (friend.isSaved()) {
+                if (friend.isSelected()) {
                     selectedList.add(friend);
                 }
             }
 
             if (mode == FriendSelectionMode.SINGLE && !selectedList.isEmpty()) {
                 Friend selected = selectedList.get(0);
-                ((AddEntryFragment) requireParentFragment()).updateSelectedFriendUI(selected);
+                updateSelectedFriendUI(selected);
             } else if (mode == FriendSelectionMode.MULTIPLE) {
-                ((AddEntryFragment) requireParentFragment()).updateSelectedUsersUI(selectedList);
+                selectedUsers.clear();
+                selectedUsers.addAll(selectedList);
+                updateSelectedUsersUI(selectedList);
             }
 
             dialog.dismiss();
@@ -172,19 +174,28 @@ public class AddEntryFragment extends Fragment {
     }
 
     private void updateSelectedFriendUI(Friend friendWithDebt) {
-        selectedFriendContainer.removeAllViews();
+        ImageView imageView = expandedFieldsEntry.findViewById(R.id.iconSelectFriendEntry);
+        TextView textView = expandedFieldsEntry.findViewById(R.id.textAddUserEntry);
 
-        TextView textView = new TextView(requireContext());
+        imageView.setImageResource(R.drawable.ic_check);
         textView.setText(friendWithDebt.getUsername() + ": " + friendWithDebt.getAmount());
-        selectedFriendContainer.addView(textView);
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text_on_hover));
     }
 
     private void updateSelectedUsersUI(List<Friend> selectedUsers) {
-        selectedUsersContainer.removeAllViews();
+        ImageView imageView = expandedFieldsRoom.findViewById(R.id.iconSelectFriendsRoom);
+        TextView textView = expandedFieldsRoom.findViewById(R.id.textAddUserRoom);
+
+        StringJoiner friends = new StringJoiner(", ");
+
+        Log.d("Friends", "FRIENDS:");
         for (Friend friend : selectedUsers) {
-            TextView textView = new TextView(requireContext());
-            textView.setText(friend.getUsername());
-            selectedUsersContainer.addView(textView);
+            Log.d("Friends", friend.getUsername());
+            friends.add(friend.getUsername());
         }
+
+        imageView.setImageResource(R.drawable.ic_check);
+        textView.setText(friends.toString());
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text_on_hover));
     }
 }

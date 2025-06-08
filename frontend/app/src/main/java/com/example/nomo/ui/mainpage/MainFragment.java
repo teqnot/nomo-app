@@ -134,7 +134,6 @@ public class MainFragment extends Fragment {
 
         for (Debt debt : allDebts) {
             try {
-                // Чистим строку от всех символов, кроме чисел и точки
                 String amountClean = debt.getAmount().replace("₽", "").replace(",", ".").replaceAll("\\s+", "");
                 double amount = Double.parseDouble(amountClean);
 
@@ -143,10 +142,11 @@ public class MainFragment extends Fragment {
                 } else {
                     totalYouOwe += amount;
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                Log.e("Updating Balance", e.getMessage());
+            }
         }
 
-        // Форматируем числа: 1234.5 → "1 234,50₽"
         return new String[]{
                 formatBalance(totalYouOwe),
                 formatBalance(totalYouAreOwed)
@@ -168,22 +168,17 @@ public class MainFragment extends Fragment {
         TextView cardAmount = cardView.findViewById(R.id.cardAmount);
         View cardLine = cardView.findViewById(R.id.cardLine);
 
-        // Обновляем заголовок
         cardTitle.setText(title);
 
-        // Обновляем сумму
         cardAmount.setText(amount);
 
-        // Обновляем фон
         GradientDrawable newBackground = new GradientDrawable();
         newBackground.setCornerRadius(15);
         newBackground.setColor(bgColor);
         cardView.setBackground(newBackground);
 
-        // Обновляем цвет линии
         cardLine.setBackgroundColor(lineColor);
 
-        // Текст подсветка
         cardTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
         cardAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
     }

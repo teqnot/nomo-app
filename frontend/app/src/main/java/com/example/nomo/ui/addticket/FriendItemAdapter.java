@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
@@ -78,6 +79,22 @@ public class FriendItemAdapter extends RecyclerView.Adapter<FriendItemAdapter.Fr
                 }
 
                 notifyDataSetChanged();
+
+                Button buttonSaveDebt = holder.dropdownInput.findViewById(R.id.buttonSaveDebt);
+                EditText editTextSum = holder.dropdownInput.findViewById(R.id.editTextSum);
+
+                buttonSaveDebt.setOnClickListener(v1 -> {
+                    String amount = editTextSum.getText().toString().trim();
+
+                    if (!amount.isEmpty()) {
+                        friend.setAmount(amount);
+                        friend.setSaved(true);
+                        notifyDataSetChanged();
+                    } else {
+                        editTextSum.setBackgroundColor(ContextCompat.getColor(context, R.color.you_owe));
+                        Toast.makeText(context, "Поле обязательно для заполнения!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
                 // MULTIPLE
                 friend.setSelected(!friend.isSelected());
@@ -90,7 +107,7 @@ public class FriendItemAdapter extends RecyclerView.Adapter<FriendItemAdapter.Fr
             if (!amount.isEmpty()) {
                 friend.setAmount(amount);
                 friend.setSaved(true);
-                notifyDataSetChanged(); // Прячем dropdown после сохранения
+                notifyDataSetChanged();
             } else {
                 Toast.makeText(context, "Введите сумму", Toast.LENGTH_SHORT).show();
             }

@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="12dp"/>
 
-
     <!-- Create Room Section -->
     <LinearLayout
         android:id="@+id/sectionCreateRoom"
@@ -114,6 +113,7 @@
                 android:onClick="onAddUserClicked">
 
                 <ImageView
+                    android:id="@+id/iconSelectFriendsRoom"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_plus"
@@ -130,11 +130,37 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/selectedUsersContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/buttonSaveRoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Сохранить"
+                    android:textSize="16sp"
+                    android:textColor="@color/secondary_text_on_hover"
+                    android:fontFamily="@font/sf_pro_text_bold"
+                    android:background="@android:color/transparent"
+                    android:textAllCaps="false"
+                    android:padding="0dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:layout_marginEnd="12dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
@@ -237,6 +263,7 @@
                 android:onClick="onAddUserClicked">
 
                 <ImageView
+                    android:id="@+id/iconSelectFriendEntry"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_plus"
@@ -253,11 +280,36 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/selectedFriendContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/buttonSaveEntry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Сохранить"
+                    android:textSize="16sp"
+                    android:textColor="@color/secondary_text_on_hover"
+                    android:fontFamily="@font/sf_pro_text_bold"
+                    android:background="@android:color/transparent"
+                    android:textAllCaps="false"
+                    android:padding="0dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:layout_marginEnd="12dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
