@@ -1,4 +1,4 @@
-package com.example.nomo.ui.addticket;
+package com.example.nomo.model;
 
 public class Friend {
     private String username;

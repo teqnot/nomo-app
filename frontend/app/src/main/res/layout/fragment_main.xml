@@ -8,17 +8,6 @@
     android:background="@color/white"
     android:fitsSystemWindows="true">
 
-    <!-- TopBar -->
-    <include
-        layout="@layout/topbar_main"
-        android:id="@+id/include_topbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="12dp"/>
-
     <!-- Секция с фиксированным приветствием, балансом и заголовком -->
     <LinearLayout
         android:id="@+id/staticContent"
@@ -26,22 +15,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/include_topbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/recyclerViewDebts"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside">
 
         <!-- Приветствие -->
-        <include layout="@layout/item_greeting_user"/>
+        <include layout="@layout/item_greeting_user" />
 
         <!-- Разделитель -->
         <View
             android:id="@+id/dividerMainBalance"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/divider_balances"
-            android:layout_marginVertical="8dp"/>
+            android:layout_marginVertical="8dp"
+            android:background="@color/divider_balances" />
 
         <!-- Баланс секции -->
         <ViewStub
@@ -49,11 +38,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout="@layout/section_balance"
-            app:layout_constraintTop_toBottomOf="@id/include_topbar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/recyclerViewDebts"
-            app:layout_constraintVertical_chainStyle="spread_inside"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/include_topbar"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
     </LinearLayout>
 
 

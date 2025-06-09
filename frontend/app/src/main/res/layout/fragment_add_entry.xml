@@ -8,13 +8,6 @@
     android:fitsSystemWindows="true"
     android:background="@color/white">
 
-    <include
-        layout="@layout/topbar_main"
-        android:id="@+id/include_topbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="12dp"/>
-
     <!-- Create Room Section -->
     <LinearLayout
         android:id="@+id/sectionCreateRoom"

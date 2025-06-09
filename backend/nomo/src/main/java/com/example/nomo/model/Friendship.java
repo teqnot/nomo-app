@@ -25,9 +25,6 @@ public class Friendship {
     @JoinColumn(name = "friend_id")
     private User friend;
 
-    @Column(name = "friend_status", nullable = false)
-    private String status;
-
     @Column(name = "friendship_created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

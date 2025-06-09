@@ -11,9 +11,39 @@
         android:label="MainFragment"
         tools:layout="@layout/fragment_main">
 
-        <!-- Переход к AddEntryFragment -->
         <action
             android:id="@+id/action_main_to_add_entry"
+            app:destination="@id/addEntryFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom" />
+
+        <action
+            android:id="@+id/action_main_to_friends"
+            app:destination="@id/friendsFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.example.nomo.ui.friends.FriendsFragment"
+        android:label="FriendsFragment"
+        tools:layout="@layout/fragment_friends">
+
+        <action
+            android:id="@+id/action_friends_to_main"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
+
+        <action
+            android:id="@+id/action_friends_to_add_entry"
             app:destination="@id/addEntryFragment"
             app:enterAnim="@anim/slide_in_bottom"
             app:exitAnim="@anim/slide_out_bottom"
@@ -26,9 +56,18 @@
         android:name="com.example.nomo.ui.addticket.AddEntryFragment"
         android:label="AddEntryFragment"
         tools:layout="@layout/fragment_add_entry">
+
         <action
             android:id="@+id/action_add_entry_to_main"
             app:destination="@id/mainFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
+
+        <action
+            android:id="@+id/action_add_entry_to_friends"
+            app:destination="@id/friendsFragment"
             app:enterAnim="@anim/slide_in_bottom"
             app:exitAnim="@anim/slide_out_bottom"
             app:popEnterAnim="@anim/slide_in_bottom"

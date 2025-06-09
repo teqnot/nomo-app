@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
+import com.example.nomo.model.Friend;
 import com.example.nomo.viewmodel.DebtViewModel;
 
 import java.util.ArrayList;

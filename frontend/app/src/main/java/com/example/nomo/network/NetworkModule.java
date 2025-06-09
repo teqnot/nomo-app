@@ -23,13 +23,8 @@ public class NetworkModule {
 
     @Provides
     public AuthApi provideAuthApi(SharedPrefManager sharedPrefManager) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new AuthTokenInterceptor(sharedPrefManager))
-                .build();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

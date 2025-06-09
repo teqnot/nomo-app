@@ -25,12 +25,6 @@ public class FriendshipController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/accept")
-    public ResponseEntity<Void> acceptRequest(@RequestBody Map<String, Long> body) {
-        friendshipService.acceptFriendRequest(body.get("requestId"));
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/list")
     public ResponseEntity<List<Map<String, Object>>> getFriends(@RequestBody Map<String, Long> body) {
         User user = new User();

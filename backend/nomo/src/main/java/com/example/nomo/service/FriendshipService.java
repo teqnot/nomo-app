@@ -35,19 +35,14 @@ public class FriendshipService {
         Friendship friendship = new Friendship();
         friendship.setUser(fromUser);
         friendship.setFriend(toUser);
-        friendship.setStatus("pending");
+        friendship.setUser(toUser);
+        friendship.setFriend(fromUser);
         friendship.setCreatedAt(LocalDateTime.now());
         friendshipRepository.save(friendship);
     }
 
-    public void acceptFriendRequest(Long requestId) {
-        Friendship friendship = friendshipRepository.findById(requestId).orElseThrow();
-        friendship.setStatus("accepted");
-        friendshipRepository.save(friendship);
-    }
-
     public List<Map<String, Object>> getFriends(User user) {
-        List<User> friends = friendshipRepository.findByUserAndStatus(user, "accepted").stream()
+        List<User> friends = friendshipRepository.findByUser(user).stream()
                 .map(Friendship::getFriend)
                 .collect(Collectors.toList());
         List<Map<String, Object>> response = new ArrayList<>();

@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
+import com.example.nomo.model.Friend;
 
 import java.util.List;
 

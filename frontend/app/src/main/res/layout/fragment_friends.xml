@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Поиск друзей -->
+    <SearchView
+        android:id="@+id/searchViewFriends"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Поиск друзей"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/bg_cards" />
+
+    <!-- Текст заголовка -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Мои друзья:"
+        android:textSize="18sp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/sf_pro_display_bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/secondary_text_on_background"
+        android:layout_marginTop="2dp"
+        android:layout_marginHorizontal="12dp"/>
+
+    <!-- RecyclerView для списка друзей -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFriends"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/staticContent"
+        app:layout_constraintVertical_weight="1" />
+</LinearLayout>

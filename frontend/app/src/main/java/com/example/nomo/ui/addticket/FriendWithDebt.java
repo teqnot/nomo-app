@@ -1,5 +1,7 @@
 package com.example.nomo.ui.addticket;
 
+import com.example.nomo.model.Friend;
+
 public class FriendWithDebt {
     private Friend friend;
     private String amount = "";

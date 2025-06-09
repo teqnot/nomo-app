@@ -4,7 +4,15 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="@color/white">
+
+    <include
+        layout="@layout/topbar_main"
+        android:id="@+id/include_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"/>
 
     <!-- NavHostFragment - здесь будут фрагменты -->
     <fragment
