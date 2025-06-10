@@ -77,7 +77,7 @@
         android:gravity="center_vertical">
 
         <com.example.nomo.ui.common.CustomEditText
-            android:id="@+id/editTextSum"
+            android:id="@+id/editTextSumPay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Сумма"

@@ -2,6 +2,7 @@ package com.example.nomo.controller;
 
 import com.example.nomo.dto.DebtDto;
 import com.example.nomo.dto.DebtRequest;
+import com.example.nomo.dto.PayDebtRequest;
 import com.example.nomo.model.Debt;
 import com.example.nomo.service.DebtService;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +34,9 @@ public class DebtController {
         return ResponseEntity.ok(dto.responseForCreate(debt));
     }
 
-    @PostMapping("/mark-paid")
-    public ResponseEntity<Void> markDebtAsPaid(@RequestBody Map<String, Long> body) {
-        Long debtId = body.get("debtId");
-        debtService.markDebtAsPaid(debtId);
+    @PostMapping("/pay")
+    public ResponseEntity<Void> payDebt(@RequestBody PayDebtRequest request) {
+        debtService.payDebt(request.getDebtId(), request.getAmountPaid());
         return ResponseEntity.ok().build();
     }
 

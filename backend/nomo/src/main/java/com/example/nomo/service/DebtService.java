@@ -49,10 +49,22 @@ public class DebtService {
         return debtRepository.save(debt);
     }
 
-    public void markDebtAsPaid(Long debtId) {
+    public void payDebt(Long debtId, Double amountPaid) {
         Debt debt = debtRepository.findById(debtId).orElseThrow();
-        debt.setIsPaid(true);
-        debtRepository.save(debt);
+        if (debt.getIsPaid()) {
+            throw new RuntimeException("Долг уже погашен");
+        }
+
+        Double remaining = debt.getAmount() - amountPaid;
+
+        if (remaining <= 0) {
+            debt.setIsPaid(true);
+            debt.setAmount(0.0);
+            debtRepository.delete(debt);
+        } else {
+            debt.setAmount(remaining);
+            debtRepository.save(debt);
+        }
     }
 
     public List<DebtDto> getDebtsByUser(Long userId) {

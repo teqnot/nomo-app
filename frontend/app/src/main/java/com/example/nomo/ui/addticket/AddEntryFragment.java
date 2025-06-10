@@ -218,6 +218,7 @@ public class AddEntryFragment extends Fragment {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(requireContext(), "Долг создан", Toast.LENGTH_SHORT).show();
+                    expandedFieldsEntry.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(requireContext(), "Ошибка создания долга", Toast.LENGTH_SHORT).show();
                 }

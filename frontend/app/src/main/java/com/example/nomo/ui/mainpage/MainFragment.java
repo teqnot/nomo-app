@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
+import com.example.nomo.api.DebtApi;
 import com.example.nomo.model.Debt;
 import com.example.nomo.model.DebtItem;
 import com.example.nomo.utils.DebtMapper;
@@ -28,10 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import jakarta.inject.Inject;
 
 @AndroidEntryPoint
 public class MainFragment extends Fragment {
 
+    @Inject
+    DebtApi debtApi;
     private RecyclerView recyclerView;
     private DebtListAdapter adapter;
     private List<Debt> allDebts = new ArrayList<>();
@@ -61,7 +65,7 @@ public class MainFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerViewDebts);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new DebtListAdapter(filteredDebts);
+        adapter = new DebtListAdapter(filteredDebts, debtApi);
         recyclerView.setAdapter(adapter);
 
         debtViewModel.getDebtList().observe(getViewLifecycleOwner(), debtItems -> {

@@ -13,6 +13,8 @@ public class DebtItem {
     private String createdAt;
     private Long roomId;
 
+    private boolean isOpened;
+
     public boolean isOwedToMe(Long userId) {
         return creditorId.equals(userId);
     }
@@ -21,7 +23,23 @@ public class DebtItem {
         return name + " - " + (isOwedToMe(userId) ? debtorUsername : creditorUsername);
     }
 
-    public String getAmount() {
-        return Double.toString(amount);
-    }
+    public Long getId() { return id; }
+
+    public Long getCreditorId() { return creditorId; }
+
+    public String getCreditorUsername() { return creditorUsername; }
+
+    public Long getDebtorId() { return debtorId; }
+
+    public String getDebtorUsername() { return debtorUsername; }
+
+    public String getAmount() { return Double.toString(amount); }
+
+    public String getName() { return name; }
+
+    public String getDescription() { return description; }
+
+    public boolean getIsOpened() { return isOpened; }
+    public void setIsOpened(boolean isOpened) { this.isOpened = isOpened; }
+
 }

@@ -6,6 +6,8 @@ public class Debt {
     private boolean isOwedToMe;
     private boolean isOpened;
 
+    private Long id;
+
     public Debt(String name, String amount, boolean isOwedToMe) {
         this.name = name;
         this.amount = amount;
@@ -19,4 +21,6 @@ public class Debt {
     public boolean isOwedToMe() { return isOwedToMe; }
     public boolean isOpened() { return isOpened; }
     public void setOpened(boolean opened) { isOpened = opened; }
+    public void setId(Long id) { this.id = id; }
+    public Long getId() { return id; }
 }
