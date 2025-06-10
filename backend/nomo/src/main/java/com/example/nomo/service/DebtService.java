@@ -2,10 +2,8 @@ package com.example.nomo.service;
 
 import com.example.nomo.dto.DebtDto;
 import com.example.nomo.model.Debt;
-import com.example.nomo.model.Room;
 import com.example.nomo.model.User;
 import com.example.nomo.repository.DebtRepository;
-import com.example.nomo.repository.RoomRepository;
 import com.example.nomo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +16,10 @@ import java.util.stream.Collectors;
 public class DebtService {
     private final DebtRepository debtRepository;
     private final UserRepository userRepository;
-    private final RoomRepository roomRepository;
 
-    public DebtService(DebtRepository debtRepository, UserRepository userRepository, RoomRepository roomRepository) {
+    public DebtService(DebtRepository debtRepository, UserRepository userRepository) {
         this.debtRepository = debtRepository;
         this.userRepository = userRepository;
-        this.roomRepository = roomRepository;
     }
 
     public Debt createDebt(Long debtorId, Long creditorId, Double amount, String name, String description, Long roomId) {
@@ -31,18 +27,12 @@ public class DebtService {
         User debtor = userRepository.findById(debtorId).orElseThrow();
         User creditor = userRepository.findById(creditorId).orElseThrow();
 
-        Room room = null;
-        if (roomId != null) {
-            room = roomRepository.findById(roomId).orElseThrow();
-        }
-
         Debt debt = new Debt();
         debt.setDebtor(debtor);
         debt.setCreditor(creditor);
         debt.setAmount(amount);
         debt.setName(name);
         debt.setDescription(description);
-        debt.setRoom(room);
         debt.setIsPaid(false);
         debt.setCreatedAt(LocalDateTime.now());
 

@@ -77,11 +77,11 @@ public class MainFragment extends Fragment {
                     allDebts.add(DebtMapper.fromDebtItem(item, userId));
                 }
 
-                Log.d("Debt Received", allDebts.get(0).getName() + " " + allDebts.get(0).getAmount());
-
                 filteredDebts.clear();
                 filteredDebts.addAll(allDebts);
                 adapter.updateDebts(filteredDebts);
+                setupBalanceCards(view);
+            } else {
                 setupBalanceCards(view);
             }
         });

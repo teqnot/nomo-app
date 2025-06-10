@@ -25,7 +25,6 @@ import com.example.nomo.model.PayDebtRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

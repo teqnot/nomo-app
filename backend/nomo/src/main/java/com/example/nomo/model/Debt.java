@@ -37,10 +37,6 @@ public class Debt {
     @Column(name = "is_paid", nullable = false)
     private Boolean isPaid = false;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", nullable = true)
-    private Room room;
-
     @Column(name = "debt_created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }
