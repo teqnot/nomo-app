@@ -175,10 +175,10 @@ public class AddEntryFragment extends Fragment {
 
     private List<Friend> getTestFriends() {
         return Arrays.asList(
-                new Friend( "testingNewFunctions"),
-                new Friend("testingNewFunctions2"),
-                new Friend("Alex"),
-                new Friend("Max")
+                new Friend( "testingNewFunctions", 1),
+                new Friend("testingNewFunctions2", 2),
+                new Friend("Alex", 3),
+                new Friend("Max", 4)
         );
     }
 

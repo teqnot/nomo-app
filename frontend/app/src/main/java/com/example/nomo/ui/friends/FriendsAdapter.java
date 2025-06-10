@@ -89,7 +89,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
 
             if (isSearchMode) {
                 buttonAdd.setOnClickListener(v -> {
-                    Friend updatedFriend = new Friend(friend.getUsername());
+                    Friend updatedFriend = new Friend(friend.getUsername(), friend.getId());
                     updatedFriend.setSaved(true);
                     listener.onAddFriend(updatedFriend);
                     buttonAdd.setImageResource(R.drawable.ic_check);

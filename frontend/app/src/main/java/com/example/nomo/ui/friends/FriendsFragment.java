@@ -20,6 +20,7 @@ import com.example.nomo.model.Friend;
 import com.example.nomo.model.UserDto;
 import com.example.nomo.repository.UserRepository;
 import com.example.nomo.utils.FriendMapper;
+import com.example.nomo.utils.SharedPrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,9 @@ public class FriendsFragment extends Fragment {
 
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    SharedPrefManager sharedPrefManager;
 
     private RecyclerView recyclerView;
     private FriendsAdapter adapter;
@@ -69,8 +73,28 @@ public class FriendsFragment extends Fragment {
         adapter = new FriendsAdapter(friends);
         adapter.setFriendItemListener(clickedFriend -> {
             if (!friends.contains(clickedFriend)) {
-                Friend friendToAdd = new Friend(clickedFriend.getUsername());
-                friends.add(friendToAdd);
+                long fromId = sharedPrefManager.getUserId();
+                long toId = clickedFriend.getId();
+
+                userRepository.sendFriendRequest(fromId, toId, new Callback<>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            clickedFriend.setSaved(true);
+                            friends.add(new Friend(clickedFriend.getUsername(), clickedFriend.getId()));
+                            adapter.updateSingleItem(clickedFriend);
+                            Toast.makeText(requireContext(), "Друг добавлен!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(), "Ошибка добавления друга", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("FriendsFragment", "Ошибка добавления друга " + t);
+                        Toast.makeText(requireContext(), "Ошибка сети", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
             int pos = searchResults.indexOf(clickedFriend);
             if (pos != -1) {
@@ -80,8 +104,8 @@ public class FriendsFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
 
-        // Заглушка
-        initTestFriends();
+        long currentUserId = sharedPrefManager.getUserId();
+        loadMyFriends(currentUserId);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -146,11 +170,27 @@ public class FriendsFragment extends Fragment {
         adapter.updateFriends(friends);
     }
 
-    private void initTestFriends() {
-        friends.clear();
-        friends.add(new Friend("Иван Борисов"));
-        friends.add(new Friend("Илья Макаров"));
-        friends.add(new Friend("Артем Рожков"));
-        adapter.updateFriends(friends);
+    private void loadMyFriends(long currentUserId) {
+        userRepository.getMyFriends(currentUserId, new Callback<>() {
+            @Override
+            public void onResponse(Call<List<UserDto>> call, Response<List<UserDto>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Friend> myFriends = FriendMapper.mapAll(response.body());
+
+                    friends.clear();
+                    friends.addAll(myFriends);
+                    adapter.updateFriends(friends);
+                } else {
+                    Log.d("FriendsFragment", "----> " + response.body());
+                    Toast.makeText(requireContext(), "Ошибка загрузки друзей", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UserDto>> call, Throwable t) {
+                Log.e("FriendsFragment", "Ошибка загрузки друзей: " + t);
+                Toast.makeText(requireContext(), "Не удалось загрузить друзей", Toast.LENGTH_SHORT);
+            }
+        });
     }
 }

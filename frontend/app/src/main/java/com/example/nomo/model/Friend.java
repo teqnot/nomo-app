@@ -2,18 +2,24 @@ package com.example.nomo.model;
 
 public class Friend {
     private String username;
+    private long id;
     private boolean isSelected;
     private boolean isSaved;
     private String amount = "";
 
-    public Friend(String username) {
+    public Friend(String username, long id) {
         this.username = username;
+        this.id = id;
         this.isSelected = false;
         this.isSaved = false;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public boolean isSelected() {

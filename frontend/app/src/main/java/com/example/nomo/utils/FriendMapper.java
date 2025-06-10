@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FriendMapper {
     public static Friend fromUserDto(UserDto userDto) {
-        Friend friend = new Friend(userDto.getUsername());
+        Friend friend = new Friend(userDto.getUsername(), userDto.getId());
         friend.setSaved(false);
         return friend;
     }

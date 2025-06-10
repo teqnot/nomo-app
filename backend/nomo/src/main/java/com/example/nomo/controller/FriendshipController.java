@@ -29,6 +29,7 @@ public class FriendshipController {
     public ResponseEntity<List<Map<String, Object>>> getFriends(@RequestBody Map<String, Long> body) {
         User user = new User();
         user.setId(body.get("userId"));
+        System.out.println("UserId -------> " + body.get("userId"));
         return ResponseEntity.ok(friendshipService.getFriends(user));
     }
 }
