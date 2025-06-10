@@ -15,9 +15,9 @@ public interface UserApi {
     @GET("users/search")
     Call<List<UserDto>> searchUsers(@Query("query") String query);
 
-    @POST("/friendships/list")
+    @POST("friendships/list")
     Call<List<UserDto>> getMyFriends(@Body FriendshipRequest request);
 
-    @POST("/friendships/send")
+    @POST("friendships/send")
     Call<Void> sendFriendRequest(@Body FriendshipRequest request);
 }

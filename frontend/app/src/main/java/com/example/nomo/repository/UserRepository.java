@@ -1,5 +1,7 @@
 package com.example.nomo.repository;
 
+import android.util.Log;
+
 import com.example.nomo.api.UserApi;
 import com.example.nomo.model.FriendshipRequest;
 import com.example.nomo.model.UserDto;

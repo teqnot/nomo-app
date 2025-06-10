@@ -22,7 +22,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nomo.R;
+import com.example.nomo.api.DebtApi;
+import com.example.nomo.model.DebtRequest;
 import com.example.nomo.model.Friend;
+import com.example.nomo.model.UserDto;
+import com.example.nomo.repository.UserRepository;
+import com.example.nomo.utils.FriendMapper;
+import com.example.nomo.utils.SharedPrefManager;
 import com.example.nomo.viewmodel.DebtViewModel;
 
 import java.util.ArrayList;
@@ -30,38 +36,39 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @AndroidEntryPoint
 public class AddEntryFragment extends Fragment {
 
-    private static final String ARG_MODE = "selection_mode"; // "mode" для передачи
+    @Inject
+    SharedPrefManager sharedPrefManager;
 
-    private int selectionMode; // SINGLE или MULTIPLE
+    @Inject
+    UserRepository userRepository;
+
+    @Inject
+    DebtApi debtApi;
 
     // UI Elements
-    private LinearLayout sectionCreateRoom;
     private LinearLayout sectionAddEntry;
-    private LinearLayout expandedFieldsRoom;
     private LinearLayout expandedFieldsEntry;
-    private EditText editTextRoomName;
-    private EditText editTextRoomDescription;
-    private TextView textAddUserRoom;
-    private LinearLayout selectedUsersContainer;
     private EditText editTextEntryName;
     private EditText editTextEntryDescription;
     private TextView textAddUserEntry;
-    private LinearLayout selectedFriendContainer;
-
-    private List<Friend> selectedUsers = new ArrayList<>();
     private FriendWithDebt selectedFriendWithDebt = null;
+    private Button buttonSaveDebt;
+    private EditText editTextSum;
     private DebtViewModel debtViewModel;
 
     public static AddEntryFragment newInstance(int mode) {
         Bundle args = new Bundle();
-        args.putInt(ARG_MODE, mode);
         AddEntryFragment fragment = new AddEntryFragment();
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -76,55 +83,51 @@ public class AddEntryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Инициализация View
-        sectionCreateRoom = view.findViewById(R.id.sectionCreateRoom);
         sectionAddEntry = view.findViewById(R.id.sectionAddEntry);
-        expandedFieldsRoom = view.findViewById(R.id.expandedFieldsRoom);
         expandedFieldsEntry = view.findViewById(R.id.expandedFieldsEntry);
-        editTextRoomName = view.findViewById(R.id.editTextRoomName);
-        editTextRoomDescription = view.findViewById(R.id.editTextRoomDescription);
-        textAddUserRoom = view.findViewById(R.id.textAddUserRoom);
         editTextEntryName = view.findViewById(R.id.editTextEntryName);
         editTextEntryDescription = view.findViewById(R.id.editTextEntryDescription);
         textAddUserEntry = view.findViewById(R.id.textAddUserEntry);
+        buttonSaveDebt = view.findViewById(R.id.buttonSaveEntry);
+        editTextSum = view.findViewById(R.id.editTextSum);
 
         debtViewModel = new ViewModelProvider(this).get(DebtViewModel.class);
 
-        // Получаем режим из аргументов
-        if (getArguments() != null) {
-            selectionMode = getArguments().getInt(ARG_MODE, FriendSelectionMode.SINGLE);
-        } else {
-            selectionMode = FriendSelectionMode.SINGLE; // по умолчанию
-        }
-
-        // Обработчики кликов по секциям
-        sectionCreateRoom.setOnClickListener(v -> {
-            isRoomExpanded = !isRoomExpanded;
-            expandedFieldsRoom.setVisibility(isRoomExpanded ? View.VISIBLE : View.GONE);
-            if (isRoomExpanded) {
-                isEntryExpanded = false;
-                expandedFieldsEntry.setVisibility(View.GONE);
-            }
-        });
-
+        // Обработчики клика по секции
         sectionAddEntry.setOnClickListener(v -> {
             isEntryExpanded = !isEntryExpanded;
             expandedFieldsEntry.setVisibility(isEntryExpanded ? View.VISIBLE : View.GONE);
-            if (isEntryExpanded) {
-                isRoomExpanded = false;
-                expandedFieldsRoom.setVisibility(View.GONE);
-            }
-        });
-
-        view.findViewById(R.id.buttonSelectFriendsRoom).setOnClickListener(v -> {
-            showFriendSelectionDialog(FriendSelectionMode.MULTIPLE);
         });
 
         view.findViewById(R.id.buttonSelectFriendEntry).setOnClickListener(v -> {
             showFriendSelectionDialog(FriendSelectionMode.SINGLE);
         });
+
+        buttonSaveDebt.setOnClickListener(v -> {
+            if (selectedFriendWithDebt == null) {
+                Toast.makeText(requireContext(), "Выберите пользователя", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String name = editTextEntryName.getText().toString().trim();
+            String description = editTextEntryDescription.getText().toString().trim();
+            String amountStr = selectedFriendWithDebt.getAmount();
+
+            if (name.isEmpty() || amountStr.isEmpty()) {
+                Toast.makeText(requireContext(), "Заполните все поля", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            double amount = Double.parseDouble(amountStr);
+            Long creditorId = sharedPrefManager.getUserId();
+            Long debtorId = selectedFriendWithDebt.getFriend().getId();
+
+            DebtRequest request = new DebtRequest(debtorId, creditorId, amount, name, description);
+
+            sendDebtToServer(request);
+        });
     }
 
-    private boolean isRoomExpanded = false;
     private boolean isEntryExpanded = false;
 
     private void showFriendSelectionDialog(int mode) {
@@ -142,44 +145,33 @@ public class AddEntryFragment extends Fragment {
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerViewFriends);
         TextView buttonDone = dialog.findViewById(R.id.buttonDone);
 
-        title.setText(mode == FriendSelectionMode.SINGLE ? "Выберите пользователя" : "Добавьте пользователей");
+        title.setText("Выберите пользователя");
 
-        List<Friend> friends = getTestFriends();
+        long currentUserId = sharedPrefManager.getUserId();
 
-        FriendItemAdapter adapter = new FriendItemAdapter(requireContext(), friends, mode);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(adapter);
+        loadMyFriends(currentUserId, friends -> {
+            FriendItemAdapter adapter = new FriendItemAdapter(requireContext(), friends, mode);
+            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            recyclerView.setAdapter(adapter);
 
-        buttonDone.setOnClickListener(v -> {
-            List<Friend> selectedList = new ArrayList<>();
-            for (Friend friend : friends) {
-                if (friend.isSelected()) {
-                    selectedList.add(friend);
+            buttonDone.setOnClickListener(v -> {
+                List<Friend> selectedList = new ArrayList<>();
+                for (Friend friend : friends) {
+                    if (friend.isSelected()) {
+                        selectedList.add(friend);
+                    }
                 }
-            }
 
-            if (mode == FriendSelectionMode.SINGLE && !selectedList.isEmpty()) {
-                Friend selected = selectedList.get(0);
-                updateSelectedFriendUI(selected);
-            } else if (mode == FriendSelectionMode.MULTIPLE) {
-                selectedUsers.clear();
-                selectedUsers.addAll(selectedList);
-                updateSelectedUsersUI(selectedList);
-            }
+                if (!selectedList.isEmpty()) {
+                    Friend selected = selectedList.get(0);
+                    updateSelectedFriendUI(selected);
+                }
 
-            dialog.dismiss();
+                dialog.dismiss();
+            });
         });
 
         dialog.show();
-    }
-
-    private List<Friend> getTestFriends() {
-        return Arrays.asList(
-                new Friend( "testingNewFunctions", 1),
-                new Friend("testingNewFunctions2", 2),
-                new Friend("Alex", 3),
-                new Friend("Max", 4)
-        );
     }
 
     private void updateSelectedFriendUI(Friend friendWithDebt) {
@@ -189,22 +181,53 @@ public class AddEntryFragment extends Fragment {
         imageView.setImageResource(R.drawable.ic_check);
         textView.setText(friendWithDebt.getUsername() + ": " + friendWithDebt.getAmount());
         textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text_on_hover));
+
+        selectedFriendWithDebt = new FriendWithDebt(friendWithDebt);
+        selectedFriendWithDebt.setId(friendWithDebt.getId());
+        selectedFriendWithDebt.setUsername(friendWithDebt.getUsername());
+        selectedFriendWithDebt.setAmount(friendWithDebt.getAmount());
     }
 
-    private void updateSelectedUsersUI(List<Friend> selectedUsers) {
-        ImageView imageView = expandedFieldsRoom.findViewById(R.id.iconSelectFriendsRoom);
-        TextView textView = expandedFieldsRoom.findViewById(R.id.textAddUserRoom);
+    private void loadMyFriends(long userId, FriendsCallback callback) {
+        userRepository.getMyFriends(userId, new Callback<>() {
+            @Override
+            public void onResponse(Call<List<UserDto>> call, Response<List<UserDto>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Friend> friends = FriendMapper.mapAll(response.body());
+                    callback.onSuccess(friends);
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки друзей", Toast.LENGTH_SHORT).show();
+                }
+            }
 
-        StringJoiner friends = new StringJoiner(", ");
+            @Override
+            public void onFailure(Call<List<UserDto>> call, Throwable t) {
+                Log.e("AddEntryFragment", "Ошибка загрузки друзей " + t);
+                Toast.makeText(requireContext(), "Ошибка сети", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-        Log.d("Friends", "FRIENDS:");
-        for (Friend friend : selectedUsers) {
-            Log.d("Friends", friend.getUsername());
-            friends.add(friend.getUsername());
-        }
+    interface FriendsCallback {
+        void onSuccess(List<Friend> friends);
+    }
 
-        imageView.setImageResource(R.drawable.ic_check);
-        textView.setText(friends.toString());
-        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text_on_hover));
+    private void sendDebtToServer(DebtRequest request) {
+        debtApi.createDebt(request).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), "Долг создан", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка создания долга", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("CreateDebt", "Ошибка создания долга " + t);
+                Toast.makeText(requireContext(), "Ошибка сети", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
