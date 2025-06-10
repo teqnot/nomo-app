@@ -1,18 +1,13 @@
 package com.example.nomo;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.nomo.ui.friends.FriendsFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -40,36 +35,32 @@ public class MainActivity extends AppCompatActivity {
 
                 if (destination.getId() == R.id.mainFragment) {
                     iconFriends.setVisibility(View.VISIBLE);
-                    iconFriends.setOnClickListener(v -> {
+                    iconFriends.setOnClickListener(v -> { // Навигация из Main в Friends
                         nav.navigate(R.id.action_main_to_friends);
                     });
 
                     iconAddEntry.setVisibility(View.VISIBLE);
-                    iconAddEntry.setOnClickListener(v -> {
-                        Log.d("MainActivity", "Nav to AddEntry");
+                    iconAddEntry.setOnClickListener(v -> { // Навигация из Main в AddEntry
                         nav.navigate(R.id.action_main_to_add_entry);
                     });
                 } else if (destination.getId() == R.id.addEntryFragment) {
                     iconFriends.setVisibility(View.VISIBLE);
-                    iconFriends.setOnClickListener(v -> {
+                    iconFriends.setOnClickListener(v -> { // Навигация из AddEntry в Friends
                         nav.navigate(R.id.action_add_entry_to_friends);
                     });
 
                     iconAddEntry.setVisibility(View.VISIBLE);
-                    iconAddEntry.setOnClickListener(v -> {
-                        Log.d("MainActivity", "Nav to Main");
+                    iconAddEntry.setOnClickListener(v -> { // Навигация из AddEntry в Main
                         nav.navigate(R.id.action_add_entry_to_main);
                     });
                 } else if (destination.getId() == R.id.friendsFragment) {
                     iconFriends.setVisibility(View.VISIBLE);
-                    iconFriends.setOnClickListener(v -> {
-                        Log.d("NAV_TEST", "Friends button clicked!");
+                    iconFriends.setOnClickListener(v -> { // Навигация из Friends в Main
                         nav.navigate(R.id.action_friends_to_main);
                     });
 
                     iconAddEntry.setVisibility(View.VISIBLE);
-                    iconAddEntry.setOnClickListener(v -> {
-                        Log.d("MainActivity", "Nav to Main");
+                    iconAddEntry.setOnClickListener(v -> { // Навигация из Friends в AddEntry
                         nav.navigate(R.id.action_friends_to_add_entry);
                     });
                 }

@@ -8,9 +8,8 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!-- Основная строка долга -->
     <LinearLayout
-        android:id="@+id/debtRowInner"
+        android:id="@+id/friendRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -18,7 +17,7 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/textFriendName"
+            android:id="@+id/textFriendsName"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -26,6 +25,15 @@
             android:textSize="16sp"
             android:textColor="@color/black"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/buttonAddFriend"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_plus"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:contentDescription="Добавить друга" />
     </LinearLayout>
 
     <View
