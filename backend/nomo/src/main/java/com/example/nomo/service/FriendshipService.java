@@ -28,17 +28,22 @@ public class FriendshipService {
         User fromUser = userRepository.findById(fromId).orElseThrow();
         User toUser = userRepository.findById(toId).orElseThrow();
 
-        if (friendshipRepository.findByUserAndFriend(fromUser, toUser).isPresent()) {
+        if (friendshipRepository.findByUserAndFriend(fromUser, toUser).isPresent() ||
+        friendshipRepository.findByUserAndFriend(toUser, fromUser).isPresent()) {
             throw new RuntimeException("Friend request already exists");
         }
 
-        Friendship friendship = new Friendship();
-        friendship.setUser(fromUser);
-        friendship.setFriend(toUser);
-        friendship.setUser(toUser);
-        friendship.setFriend(fromUser);
-        friendship.setCreatedAt(LocalDateTime.now());
-        friendshipRepository.save(friendship);
+        Friendship friendship1 = new Friendship();
+        friendship1.setUser(fromUser);
+        friendship1.setFriend(toUser);
+        friendship1.setCreatedAt(LocalDateTime.now());
+
+        Friendship friendship2 = new Friendship();
+        friendship2.setUser(toUser);
+        friendship2.setFriend(fromUser);
+        friendship2.setCreatedAt(LocalDateTime.now());
+
+        friendshipRepository.saveAll(List.of(friendship1, friendship2));
     }
 
     public List<Map<String, Object>> getFriends(User user) {

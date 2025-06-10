@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -32,5 +33,12 @@ public class UserService {
         user.setRole("USER");
         user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
+    }
+
+    public List<User> searchUsers(String query, String currentUsername) {
+        return userRepository.searchUsers(query)
+                .stream()
+                .filter(u -> !u.getUsername().equals(currentUsername))
+                .toList();
     }
 }

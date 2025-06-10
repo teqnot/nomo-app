@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,11 +17,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.nomo.R;
 import com.example.nomo.model.Friend;
+import com.example.nomo.model.UserDto;
+import com.example.nomo.repository.UserRepository;
+import com.example.nomo.utils.FriendMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+@AndroidEntryPoint
 public class FriendsFragment extends Fragment {
+
+    @Inject
+    UserRepository userRepository;
 
     private RecyclerView recyclerView;
     private FriendsAdapter adapter;
@@ -29,7 +44,7 @@ public class FriendsFragment extends Fragment {
     private SearchView searchView;
     private TextView titleMyFriends;
     private boolean isSearchMode = false;
-    private List<Friend> allUsers; // Заглушка на время тестирования UI
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -93,30 +108,35 @@ public class FriendsFragment extends Fragment {
     }
 
     private void startSearch(String query) {
-        searchResults.clear();
-
-        for (Friend friend : getAllUsers()) {
-            if (!friend.getUsername().toLowerCase().contains(query.toLowerCase())) continue;
-
-            boolean alreadyAdded = false;
-            for (Friend f : friends) {
-                if (f.getUsername().equals(friend.getUsername())) {
-                    alreadyAdded = true;
-                    break;
-                }
-            }
-
-            if (!alreadyAdded) {
-                Friend copy = new Friend(friend.getUsername());
-                copy.setSaved(false);
-                searchResults.add(copy);
-            }
+        if (query.isEmpty()) {
+            restoreOriginalList();
+            return;
         }
 
         titleMyFriends.setText("Результаты поиска:");
         isSearchMode = true;
         adapter.setSearchMode(true);
-        adapter.updateFriends(searchResults);
+
+        userRepository.searchUsers(query, new Callback<>() {
+            @Override
+            public void onResponse(Call<List<UserDto>> call, Response<List<UserDto>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Friend> results = FriendMapper.mapAll(response.body());
+
+                    searchResults.clear();
+                    searchResults.addAll(results);
+                    adapter.updateFriends(searchResults);
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка поиска", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UserDto>> call, Throwable t) {
+                Log.e("FriendsFragment", "Ошибка поиска", t);
+                Toast.makeText(requireContext(), "Не удалось выполнить поиск", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void restoreOriginalList() {
@@ -124,18 +144,6 @@ public class FriendsFragment extends Fragment {
         isSearchMode = false;
         adapter.setSearchMode(false);
         adapter.updateFriends(friends);
-    }
-
-    private List<Friend> getAllUsers() {
-        if (allUsers == null) {
-            allUsers = new ArrayList<>();
-            allUsers.add(new Friend("test1"));
-            allUsers.add(new Friend("test2"));
-            allUsers.add(new Friend("test3"));
-            allUsers.add(new Friend("test4"));
-            allUsers.add(new Friend("test5"));
-        }
-        return allUsers;
     }
 
     private void initTestFriends() {

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.nomo.api.AuthApi;
 import com.example.nomo.api.DebtApi;
+import com.example.nomo.api.UserApi;
 import com.example.nomo.network.interceptor.AuthTokenInterceptor;
 import com.example.nomo.utils.SharedPrefManager;
 
@@ -44,6 +45,21 @@ public class NetworkModule {
                 .build();
 
         return retrofit.create(DebtApi.class);
+    }
+
+    @Provides
+    public UserApi provideUserApi(SharedPrefManager sharedPrefManager) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new AuthTokenInterceptor(sharedPrefManager))
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(UserApi.class);
     }
 
     @Provides
