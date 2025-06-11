@@ -25,6 +25,7 @@ import com.example.nomo.R;
 import com.example.nomo.api.DebtApi;
 import com.example.nomo.model.DebtRequest;
 import com.example.nomo.model.Friend;
+import com.example.nomo.model.FriendWithDebt;
 import com.example.nomo.model.UserDto;
 import com.example.nomo.repository.UserRepository;
 import com.example.nomo.utils.FriendMapper;
@@ -32,9 +33,7 @@ import com.example.nomo.utils.SharedPrefManager;
 import com.example.nomo.viewmodel.DebtViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 
 import javax.inject.Inject;
 

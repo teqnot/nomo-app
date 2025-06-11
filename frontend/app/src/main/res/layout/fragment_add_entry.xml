@@ -83,7 +83,7 @@
                 android:id="@+id/editTextEntryDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Название"
+                android:hint="Описание"
                 android:drawableLeft="@drawable/ic_description"
                 android:drawablePadding="8dp"
                 android:textSize="16sp"

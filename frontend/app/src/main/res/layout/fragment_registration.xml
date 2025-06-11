@@ -87,20 +87,21 @@
             android:padding="12dp"
             android:textSize="18sp"
             android:fontFamily="@font/sf_pro_text_medium"
-            android:layout_marginTop="32dp"/>
+            android:layout_marginTop="32dp"
+            android:background="@android:color/transparent"/>
 
         <com.example.nomo.ui.common.CustomEditText
             android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:inputType="textPassword"
             android:drawableLeft="@drawable/ic_register_mail"
             android:drawablePadding="8dp"
             android:textSize="18sp"
             android:fontFamily="@font/sf_pro_text_medium"
             android:padding="12dp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"/>
 
         <!-- Поле ввода пароля -->
         <com.example.nomo.ui.common.CustomEditText
@@ -114,14 +115,15 @@
             android:textSize="18sp"
             android:fontFamily="@font/sf_pro_text_medium"
             android:padding="12dp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"/>
 
         <!-- Кнопка Зарегестрироваться -->
         <Button
             android:id="@+id/buttonRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Зарегестрироваться"
+            android:text="Зарегистрироваться"
             android:textSize="24sp"
             android:fontFamily="@font/sf_pro_display_bold"
             android:textColor="@color/white"

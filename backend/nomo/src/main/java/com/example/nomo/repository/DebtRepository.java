@@ -10,6 +10,5 @@ import java.util.List;
 @Repository
 public interface DebtRepository extends JpaRepository<Debt, Long> {
     List<Debt> findByDebtor(User debtor);
-    List<Debt> findByCreditor(User creditor);;
-    List<Debt> findByIsPaidFalseAndDebtor(User debtor);
+    List<Debt> findByCreditor(User creditor);
 }

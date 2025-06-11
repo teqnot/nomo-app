@@ -1,6 +1,4 @@
-package com.example.nomo.ui.addticket;
-
-import com.example.nomo.model.Friend;
+package com.example.nomo.model;
 
 public class FriendWithDebt {
     private Friend friend;
